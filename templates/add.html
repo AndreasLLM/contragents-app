@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить контрагента</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .back {
+            display: inline-block;
+            margin-top: 15px;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .back:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>➕ Добавить нового контрагента</h1>
+    
+    <form method="POST" action="/add">
+        <label for="name">Имя контрагента:*</label>
+        <input type="text" id="name" name="name" required placeholder="Введите имя">
+        
+        <label for="phone">Телефон:</label>
+        <input type="text" id="phone" name="phone" placeholder="+7 (XXX) XXX-XX-XX">
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="example@mail.com">
+        
+        <label for="address">Адрес:</label>
+        <input type="text" id="address" name="address" placeholder="Город, улица, дом">
+        
+        <label for="note">Примечание:</label>
+        <textarea id="note" name="note" placeholder="Дополнительная информация..."></textarea>
+        
+        <button type="submit">💾 Сохранить контрагента</button>
+    </form>
+    
+    <a href="/" class="back">← Вернуться к списку</a>
+</body>
+</html>
