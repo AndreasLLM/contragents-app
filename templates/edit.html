@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Добавить контрагента</title>
+    <title>Редактировать контрагента</title>
     <style>
         :root {
             --primary-color: #5dade2;
@@ -267,61 +267,75 @@
     <!-- ЗАГОЛОВОК С КНОПКОЙ -->
     <div class="header-container">
         <div>
-            <h1>➕ Добавить нового контрагента</h1>
+            <h1>✏️ Редактировать контрагента</h1>
             <a href="{{ url_for('index') }}" class="back-button">← Назад</a>
         </div>
-        <button type="submit" form="addForm" class="header-button">
-            <span>💾</span> Сохранить контрагента
+        <button type="submit" form="editForm" class="header-button">
+            <span>💾</span> Сохранить изменения
         </button>
     </div>
     
     <div id="message-container"></div>
     
     <div class="form-panel">
-        <form id="addForm" method="POST">
+        <form id="editForm" method="POST">
             <!-- ОСНОВНЫЕ ПОЛЯ -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="org_name" class="required">Наименование организации:</label>
-                    <input type="text" id="org_name" name="org_name" class="form-input" required maxlength="50">
-                    <div class="char-counter" id="org_name_counter">0/50</div>
+                    <input type="text" id="org_name" name="org_name" class="form-input" 
+                           value="{{ contragent.org_name }}" required maxlength="50">
+                    <div class="char-counter" id="org_name_counter">{{ contragent.org_name|length }}/50</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="inn">ИНН:</label>
-                    <input type="text" id="inn" name="inn" class="form-input" maxlength="20">
-                    <div class="char-counter" id="inn_counter">0/20</div>
+                    <input type="text" id="inn" name="inn" class="form-input" 
+                           value="{{ contragent.inn or '' }}" maxlength="20">
+                    <div class="char-counter" id="inn_counter">{{ (contragent.inn or '')|length }}/20</div>
                 </div>
             </div>
             
             <div class="form-row">
                 <div class="form-group">
                     <label for="contact_person">Контактное лицо:</label>
-                    <input type="text" id="contact_person" name="contact_person" class="form-input" maxlength="50">
-                    <div class="char-counter" id="contact_person_counter">0/50</div>
+                    <input type="text" id="contact_person" name="contact_person" class="form-input" 
+                           value="{{ contragent.contact_person or '' }}" maxlength="50">
+                    <div class="char-counter" id="contact_person_counter">{{ (contragent.contact_person or '')|length }}/50</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="position">Должность:</label>
-                    <input type="text" id="position" name="position" class="form-input" maxlength="50">
-                    <div class="char-counter" id="position_counter">0/50</div>
+                    <input type="text" id="position" name="position" class="form-input" 
+                           value="{{ contragent.position or '' }}" maxlength="50">
+                    <div class="char-counter" id="position_counter">{{ (contragent.position or '')|length }}/50</div>
                 </div>
             </div>
             
             <div class="form-group">
                 <label for="address">Адрес:</label>
-                <input type="text" id="address" name="address" class="form-input" maxlength="50">
-                <div class="char-counter" id="address_counter">0/50</div>
+                <input type="text" id="address" name="address" class="form-input" 
+                       value="{{ contragent.address or '' }}" maxlength="50">
+                <div class="char-counter" id="address_counter">{{ (contragent.address or '')|length }}/50</div>
             </div>
             
             <!-- ТЕЛЕФОНЫ -->
             <div class="multi-fields-section">
                 <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Телефоны:</label>
                 <div id="phoneFields">
+                    {% for phone in contragent.phones %}
+                    <div class="multi-field-group">
+                        <input type="text" name="number" class="form-input" 
+                               value="{{ phone.number }}" maxlength="20">
+                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updatePhoneCounters()">×</button>
+                    </div>
+                    {% endfor %}
+                    {% if contragent.phones|length == 0 %}
                     <div class="multi-field-group">
                         <input type="text" name="number" class="form-input" placeholder="+7 (XXX) XXX-XX-XX" maxlength="20">
                         <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updatePhoneCounters()">×</button>
                     </div>
+                    {% endif %}
                 </div>
                 <button type="button" class="add-field-btn" onclick="addField('phoneFields', 'number', 'Телефон', 'text', '+7 (XXX) XXX-XX-XX', 20, updatePhoneCounters)">
                     <span>+</span> Добавить телефон
@@ -333,10 +347,19 @@
             <div class="multi-fields-section">
                 <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Email адреса:</label>
                 <div id="emailFields">
+                    {% for email in contragent.emails %}
+                    <div class="multi-field-group">
+                        <input type="email" name="email_address" class="form-input" 
+                               value="{{ email.address }}" maxlength="50">
+                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateEmailCounters()">×</button>
+                    </div>
+                    {% endfor %}
+                    {% if contragent.emails|length == 0 %}
                     <div class="multi-field-group">
                         <input type="email" name="email_address" class="form-input" placeholder="example@mail.com" maxlength="50">
                         <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateEmailCounters()">×</button>
                     </div>
+                    {% endif %}
                 </div>
                 <button type="button" class="add-field-btn" onclick="addField('emailFields', 'email_address', 'Email', 'email', 'example@mail.com', 50, updateEmailCounters)">
                     <span>+</span> Добавить email
@@ -348,10 +371,19 @@
             <div class="multi-fields-section">
                 <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Веб-сайты:</label>
                 <div id="websiteFields">
+                    {% for site in contragent.websites %}
+                    <div class="multi-field-group">
+                        <input type="text" name="url" class="form-input" 
+                               value="{{ site.url }}" maxlength="200">
+                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateWebsiteCounters()">×</button>
+                    </div>
+                    {% endfor %}
+                    {% if contragent.websites|length == 0 %}
                     <div class="multi-field-group">
                         <input type="text" name="url" class="form-input" placeholder="example.com или любой текст" maxlength="200">
                         <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateWebsiteCounters()">×</button>
                     </div>
+                    {% endif %}
                 </div>
                 <button type="button" class="add-field-btn" onclick="addField('websiteFields', 'url', 'Сайт', 'text', 'example.com или любой текст', 200, updateWebsiteCounters)">
                     <span>+</span> Добавить сайт
@@ -362,7 +394,7 @@
             <!-- КНОПКА В ФОРМЕ -->
             <div class="form-buttons">
                 <button type="submit" class="form-button">
-                    <span>💾</span> Сохранить контрагента
+                    <span>💾</span> Сохранить изменения
                 </button>
             </div>
         </form>
@@ -472,12 +504,12 @@
         }
         
         // Обработка формы
-        document.getElementById('addForm').addEventListener('submit', function(e) {
+        document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
             
-            fetch('/add', {
+            fetch(window.location.pathname, {
                 method: 'POST',
                 body: formData
             })
