@@ -60,20 +60,24 @@
         
         /* КНОПКА НАЗАД */
         .back-button {
-            display: inline-block;
-    background-color: #28a745; /* ← ЗЕЛЕНЫЙ ЦВЕТ */
+    display: inline-flex; /* ← МЕНЯЕМ НА flex */
+    align-items: center; /* ← ДОБАВЛЯЕМ вертикальное выравнивание */
+    justify-content: center; /* ← ДОБАВЛЯЕМ горизонтальное выравнивание */
+    background-color: #28a745;
     color: white;
-    padding: 10px 20px; /* ← УВЕЛИЧИЛИ ОТСТУПЫ */
+    padding: 10px 20px;
     text-decoration: none;
-    border-radius: 6px; /* ← НЕМНОГО БОЛЬШЕ СКРУГЛЕНИЕ */
-    font-size: 16px; /* ← УВЕЛИЧИЛИ ШРИФТ */
-    font-weight: 600; /* ← СДЕЛАЛИ БОЛЕЕ ЖИРНЫМ */
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
     margin-top: 8px;
-    transition: all 0.2s; /* ← АНИМАЦИЯ ДЛЯ ВСЕХ СВОЙСТВ */
+    transition: all 0.2s;
+    height: 22px; /* ← ДОБАВЛЯЕМ фиксированную высоту для точного выравнивания */
         }
         
         .back-button:hover {
-            background-color: #5a6268;
+            background-color: #5dade2; /* ← СВЕТЛО-СИНИЙ (primary-color) */
+    transform: translateY(-2px);
         }
         
         .form-panel {
