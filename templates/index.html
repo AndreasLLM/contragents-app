@@ -24,82 +24,28 @@
         /* ВЕРХНЯЯ ПАНЕЛЬ */
         .top-panel {
             display: grid;
-            grid-template-columns: 1fr auto;
+            grid-template-columns: 1fr auto 1fr;
             gap: 30px;
             align-items: start;
             margin-bottom: 20px;
         }
         
-        /* ЛЕВАЯ КОЛОНКА - ЗАГОЛОВОК И КНОПКА */
-        .left-column {
+        /* ЛЕВАЯ СЕКЦИЯ - ПОИСК */
+        .search-section {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            align-items: flex-start;
         }
         
-        h1 {
-            color: #2c3e50;
-            margin: 0;
-            display: flex;
-            align-items: flex-start; /* Выравниваем иконку по верху */
-            gap: 15px;
-            font-size: 36px;
-            font-weight: 700;
-        }
-        
-        .icon-title {
-            font-size: 40px;
-            line-height: 1; /* Убираем лишний межстрочный интервал */
-        }
-        
-        /* КНОПКА ДОБАВЛЕНИЯ */
-        .button-add {
-    display: inline-flex;
-    align-items: center;
-    background-color: var(--primary-color);
-    color: white;
-    padding: 10px 25px 10px 15px; /* ← Изменяем: уменьшаем левый padding с 25px до 15px */
-    text-decoration: none;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-size: 22px;
-    font-weight: 500;
-    transition: all 0.2s;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-    width: fit-content;
-    height: 38px; /* ← Добавляем фиксированную высоту для точного позиционирования */
-        }
-        
-        .button-add:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
-        }
-        
-        /* ПЛЮС - уменьшим размер */
-        .big-plus {
-    font-size: 40px !important;
-    font-weight: bold;
-    margin-right: 12px;
-    display: flex; /* Добавляем flex */
-    align-items: center; /* Центрируем по вертикали */
-    justify-content: center; /* Центрируем по горизонтали */
-    height: 100%; /* Занимаем всю высоту */
-    transform: translateY(-3px); /* Микро-корректировка если нужно */
-        }
-        
-        /* ПРАВАЯ КОЛОНКА - ПОИСК */
         .search-panel {
             background: var(--light-blue);
-            padding: 10px;
+            padding: 15px;
             border-radius: 8px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            min-width: 400px;
-            /* Выравниваем по нижнему краю левой колонки? */
-            align-self: flex-end; /* Это выровняет панель поиска по нижнему краю левой колонки */
+            gap: 15px;
+            width: 100%;
+            min-width: 350px;
+            box-sizing: border-box;
         }
         
         .search-row {
@@ -113,7 +59,7 @@
             font-weight: 600;
             font-size: 15px;
             white-space: nowrap;
-            min-width: 90px;
+            min-width: 100px;
             text-align: right;
         }
         
@@ -125,19 +71,185 @@
             box-sizing: border-box;
             height: 40px;
             width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            min-width: 180px;
         }
         
         .search-select {
-            padding: 10px 12px;
+            padding: 10px 40px 10px 12px;
             border: 1px solid #ffffff;
             border-radius: 5px;
             font-size: 15px;
             box-sizing: border-box;
             height: 40px;
             width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            min-width: 180px;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333' width='28' height='28'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 24px;
+            color: #333;
+            cursor: pointer;
         }
         
-        /* ТАБЛИЦА */
+        .search-select option {
+            padding-left: 12px;
+        }
+        
+        /* ЦЕНТРАЛЬНАЯ СЕКЦИЯ - ЗАГОЛОВОК И КНОПКА */
+        .center-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-width: 300px;
+            justify-content: center;
+            padding-top: 5px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 36px;
+            font-weight: 700;
+        }
+        
+        .icon-title {
+            font-size: 40px;
+            line-height: 1;
+        }
+        
+        /* КНОПКА ДОБАВЛЕНИЯ */
+        .button-add {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 25px 10px 15px;
+            text-decoration: none;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 22px;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            width: fit-content;
+            height: 38px;
+        }
+        
+        .button-add:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+        }
+        
+        /* ПЛЮС В КНОПКЕ */
+        .big-plus {
+            font-size: 40px !important;
+            font-weight: bold;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            transform: translateY(-3px);
+        }
+        
+        /* ПРАВАЯ СЕКЦИЯ - АВТОРИЗАЦИЯ/РЕГИСТРАЦИЯ */
+        .auth-panel {
+            background: var(--light-blue);
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 350px;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        
+        .auth-form {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
+        
+        .auth-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .auth-input {
+            padding: 10px 12px;
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.9);
+            width: 100%;
+        }
+        
+        .auth-input:focus {
+            outline: none;
+            border-color: #28a745;
+            background-color: white;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .auth-button {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            height: 40px;
+            white-space: nowrap;
+            transition: all 0.2s;
+            width: 120px;
+        }
+        
+        .auth-button:hover {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+            transform: translateY(-1px);
+        }
+        
+        .auth-register {
+            color: white;
+            font-size: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.2s;
+            text-align: center;
+            width: 120px;
+        }
+        
+        .auth-register:hover {
+            color: #e9ecef;
+            text-decoration: underline;
+        }
+        
+        /* ТАБЛИЦА - ОБЫЧНАЯ ВЕРСИЯ */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -176,30 +288,24 @@
         }
         
         /* ШИРИНЫ СТОЛБЦОВ */
-        td:nth-child(1), th:nth-child(1) { width: 22%; } /* Организация, ИНН */
-        td:nth-child(2), th:nth-child(2) { width: 12%; } /* Контактное лицо */
-        td:nth-child(3), th:nth-child(3) { width: 10%; } /* Должность */
-        td:nth-child(4), th:nth-child(4) { width: 12%; } /* Адрес */
-        td:nth-child(5), th:nth-child(5) { width: 12%; } /* Телефоны */
-        td:nth-child(6), th:nth-child(6) { width: 12%; } /* Email */
-        td:nth-child(7), th:nth-child(7) { width: 12%; } /* Сайты */
-        td:nth-child(8), th:nth-child(8) { width: 8%; min-width: 80px; } /* Ред. - увеличили ширину */
-        
-        /* ОБЪЕДИНЕННЫЙ СТОЛБЕЦ ОРГАНИЗАЦИЯ/ИНН */
-        .org-cell {
-            /* Убрали display: block, оставим по умолчанию (table-cell) */
-        }
+        td:nth-child(1), th:nth-child(1) { width: 22%; }
+        td:nth-child(2), th:nth-child(2) { width: 12%; }
+        td:nth-child(3), th:nth-child(3) { width: 10%; }
+        td:nth-child(4), th:nth-child(4) { width: 12%; }
+        td:nth-child(5), th:nth-child(5) { width: 12%; }
+        td:nth-child(6), th:nth-child(6) { width: 12%; }
+        td:nth-child(7), th:nth-child(7) { width: 12%; }
+        td:nth-child(8), th:nth-child(8) { width: 8%; min-width: 80px; }
         
         .org-name {
             font-weight: 600;
             font-size: 14px;
-            margin-bottom: 3px; /* Уменьшили отступ */
+            margin-bottom: 3px;
         }
         
         .org-inn {
             font-size: 12px;
             color: #666;
-            /* Убрали border-top и padding-top, чтобы не было разделительной линии */
         }
         
         /* СПИСКИ В ЯЧЕЙКАХ */
@@ -219,37 +325,37 @@
         /* КНОПКИ ДЕЙСТВИЙ */
         .actions-cell {
             text-align: center;
-    padding: 8px 10px !important;
-    vertical-align: middle; /* ← ДОБАВЛЯЕМ ЭТУ СТРОКУ */
+            padding: 8px 10px !important;
+            vertical-align: middle;
         }
         
         .action-buttons {
             display: flex;
-    flex-direction: row; /* ← МЕНЯЕМ НА row (горизонтально) */
-    gap: 6px;
-    align-items: center;
-    justify-content: center; /* ← ДОБАВЛЯЕМ для центрирования по горизонтали */
+            flex-direction: row;
+            gap: 6px;
+            align-items: center;
+            justify-content: center;
         }
         
         .button-action {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    background-color: white; /* ← БЕЛЫЙ ФОН */
-    color: var(--action-color); /* ← СВЕТЛО-СИНИЙ ЦВЕТ ИКОНОК */
-    border: 1px solid var(--action-color); /* ← СВЕТЛО-СИНЯЯ ОКАНТОВКА */
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            background-color: white;
+            color: var(--action-color);
+            border: 1px solid var(--action-color);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
         }
         
         .button-action:hover {
-    background-color: var(--action-color); /* ← СВЕТЛО-СИНИЙ ФОН ПРИ НАВЕДЕНИИ */
-    color: white; /* ← БЕЛЫЙ ЦВЕТ ИКОНОК ПРИ НАВЕДЕНИИ */
-    transform: scale(1.05);
+            background-color: var(--action-color);
+            color: white;
+            transform: scale(1.05);
         }
         
         /* СООБЩЕНИЯ */
@@ -297,45 +403,215 @@
             margin-top: 15px;
         }
         
+        /* ТАБЛИЦА ДЛЯ МОБИЛЬНЫХ - КАРТОЧКИ */
+        .mobile-table {
+            display: none;
+        }
+        
+        .mobile-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        
+        .mobile-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .mobile-row:last-child {
+            border-bottom: none;
+        }
+        
+        .mobile-label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 120px;
+            flex-shrink: 0;
+        }
+        
+        .mobile-value {
+            flex: 1;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+        
+        .mobile-contacts {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .mobile-contacts li {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
         /* АДАПТИВНОСТЬ */
-        @media (max-width: 1100px) {
+        @media (max-width: 1400px) {
             .top-panel {
                 grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
                 gap: 20px;
+            }
+            
+            .auth-panel {
+                grid-row: 1;
+                justify-self: center;
+                min-width: auto;
+                width: 100%;
+                max-width: 600px;
+            }
+            
+            .center-section {
+                grid-row: 2;
+                min-width: auto;
+                align-items: center;
+                padding-top: 0;
+            }
+            
+            .search-section {
+                grid-row: 3;
+                min-width: auto;
+                width: 100%;
             }
             
             .search-panel {
                 min-width: auto;
-                align-self: stretch; /* Растягиваем на всю ширину */
+                width: 100%;
+                max-width: 600px;
+                margin: 0 auto;
             }
             
-            h1 {
-                font-size: 30px;
+            .search-label {
+                min-width: 80px;
             }
             
-            .big-plus {
-                font-size: 30px !important;
+            .search-select {
+                padding: 10px 40px 10px 12px;
+            }
+        }
+        
+        @media (max-width: 1100px) {
+            .top-panel {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+                gap: 20px;
             }
             
-            .button-add {
-                font-size: 16px;
-                padding: 8px 20px;
+            .auth-panel {
+                grid-row: 1;
+                justify-self: center;
+                min-width: auto;
+                width: 100%;
+                max-width: 500px;
+            }
+            
+            .center-section {
+                grid-row: 2;
+                min-width: auto;
+                align-items: center;
+            }
+            
+            .search-section {
+                grid-row: 3;
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .search-panel {
+                min-width: auto;
+                width: 100%;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            
+            .auth-form {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .auth-fields {
+                width: 100%;
+            }
+            
+            .auth-buttons {
+                flex-direction: row;
+                gap: 20px;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .auth-button, .auth-register {
+                width: auto;
+            }
+            
+            .search-select {
+                padding: 10px 40px 10px 12px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            /* Показываем мобильную таблицу и скрываем десктопную */
+            table {
+                display: none;
+            }
+            
+            .mobile-table {
+                display: block;
+            }
+            
+            .empty {
+                display: block;
+            }
+            
+            .top-panel {
+                align-items: center;
+            }
+            
+            .search-panel, .auth-panel {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .search-select {
+                padding: 10px 40px 10px 12px;
             }
         }
         
         @media (max-width: 768px) {
             body {
-                padding: 20px 15px;
+                padding: 15px 10px;
+            }
+            
+            .top-panel {
+                gap: 15px;
             }
             
             .search-row {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 8px;
             }
             
             .search-label {
                 text-align: left;
-                margin-bottom: 5px;
+                margin-bottom: 0;
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .search-input, .search-select {
+                width: 100%;
+                min-width: 0;
+            }
+            
+            .search-select {
+                padding: 10px 40px 10px 12px;
             }
             
             .big-plus {
@@ -346,14 +622,96 @@
             .button-add {
                 font-size: 15px;
                 padding: 6px 15px;
+                height: 34px;
             }
             
-            table {
-                font-size: 12px;
+            .auth-buttons {
+                flex-direction: column;
+                gap: 10px;
             }
             
-            th, td {
-                padding: 6px 8px;
+            .auth-button {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 28px;
+                flex-direction: column;
+                gap: 5px;
+                text-align: center;
+            }
+            
+            .icon-title {
+                font-size: 32px;
+            }
+            
+            /* Мобильные карточки */
+            .mobile-row {
+                flex-direction: column;
+                gap: 5px;
+                padding: 10px 0;
+            }
+            
+            .mobile-label {
+                min-width: auto;
+                font-size: 14px;
+            }
+            
+            .mobile-value {
+                text-align: left;
+                font-size: 14px;
+            }
+            
+            .mobile-contacts li {
+                font-size: 13px;
+                padding: 3px 0;
+            }
+            
+            .search-panel, .auth-panel {
+                padding: 12px;
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 24px;
+            }
+            
+            .icon-title {
+                font-size: 28px;
+            }
+            
+            .button-add {
+                font-size: 14px;
+                padding: 5px 12px;
+                height: 32px;
+            }
+            
+            .big-plus {
+                font-size: 22px !important;
+                margin-right: 8px;
+            }
+            
+            .search-panel, .auth-panel {
+                padding: 10px;
+                width: 100%;
+            }
+            
+            .search-input, .search-select, .auth-input {
+                font-size: 14px;
+                padding: 8px 10px;
+                height: 36px;
+            }
+            
+            .search-select {
+                padding: 8px 40px 8px 10px;
+            }
+            
+            .auth-button {
+                height: 36px;
+                font-size: 13px;
+                padding: 8px 15px;
             }
         }
     </style>
@@ -361,47 +719,63 @@
 <body>
     <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
     <div class="top-panel">
-        <!-- ЛЕВАЯ КОЛОНКА -->
-        <div class="left-column">
-            <h1><span class="icon-title">👔</span> Контрагенты</h1> <!-- Заменили иконку на человека с тонким контуром -->
+        <!-- ЛЕВАЯ ЧАСТЬ - ПОИСК (теперь слева на десктопе) -->
+        <div class="search-section">
+            <div class="search-panel">
+                <div class="search-row">
+                    <span class="search-label">Искать по:</span>
+                    <select id="search_field" name="field" class="search-select">
+                        <option value="all" {% if search_field == 'all' %}selected{% endif %}>Всем параметрам</option>
+                        <option value="org_name" {% if search_field == 'org_name' %}selected{% endif %}>Наименование</option>
+                        <option value="inn" {% if search_field == 'inn' %}selected{% endif %}>ИНН</option>
+                        <option value="contact_person" {% if search_field == 'contact_person' %}selected{% endif %}>Контактное лицо</option>
+                        <option value="address" {% if search_field == 'address' %}selected{% endif %}>Адрес</option>
+                        <option value="position" {% if search_field == 'position' %}selected{% endif %}>Должность</option>
+                        <option value="phones" {% if search_field == 'phones' %}selected{% endif %}>Телефоны</option>
+                        <option value="emails" {% if search_field == 'emails' %}selected{% endif %}>Email</option>
+                        <option value="websites" {% if search_field == 'websites' %}selected{% endif %}>Сайты</option>
+                    </select>
+                </div>
+                
+                <div class="search-row">
+                    <span class="search-label">Поиск:</span>
+                    <input type="text" 
+                           id="search_query" 
+                           name="q" 
+                           class="search-input" 
+                           placeholder="Введите текст..."
+                           value="{{ search_query }}">
+                </div>
+            </div>
+        </div>
+        
+        <!-- ЦЕНТРАЛЬНАЯ ЧАСТЬ - ЗАГОЛОВОК И КНОПКА -->
+        <div class="center-section">
+            <h1><span class="icon-title">👔</span> Контрагенты</h1>
             <a href="{{ url_for('add_contragent') }}" class="button-add">
                 <span class="big-plus">+</span> Добавить нового контрагента
             </a>
         </div>
         
-        <!-- ПРАВАЯ КОЛОНКА - ПОИСК -->
-        <div class="search-panel">
-            <div class="search-row">
-                <span class="search-label">Искать по:</span>
-                <select id="search_field" name="field" class="search-select">
-                    <option value="all" {% if search_field == 'all' %}selected{% endif %}>Всем параметрам</option>
-                    <option value="org_name" {% if search_field == 'org_name' %}selected{% endif %}>Наименование</option>
-                    <option value="inn" {% if search_field == 'inn' %}selected{% endif %}>ИНН</option>
-                    <option value="contact_person" {% if search_field == 'contact_person' %}selected{% endif %}>Контактное лицо</option>
-                    <option value="address" {% if search_field == 'address' %}selected{% endif %}>Адрес</option>
-                    <option value="position" {% if search_field == 'position' %}selected{% endif %}>Должность</option>
-                    <option value="phones" {% if search_field == 'phones' %}selected{% endif %}>Телефоны</option>
-                    <option value="emails" {% if search_field == 'emails' %}selected{% endif %}>Email</option>
-                    <option value="websites" {% if search_field == 'websites' %}selected{% endif %}>Сайты</option>
-                </select>
-            </div>
-            
-            <div class="search-row">
-                <span class="search-label">Поиск:</span>
-                <input type="text" 
-                       id="search_query" 
-                       name="q" 
-                       class="search-input" 
-                       placeholder="Введите текст..."
-                       value="{{ search_query }}">
-            </div>
+        <!-- ПРАВАЯ ЧАСТЬ - АВТОРИЗАЦИЯ/РЕГИСТРАЦИЯ (теперь справа на десктопе) -->
+        <div class="auth-panel">
+            <form class="auth-form">
+                <div class="auth-fields">
+                    <input type="text" class="auth-input" placeholder="Логин" required>
+                    <input type="password" class="auth-input" placeholder="Пароль" required>
+                </div>
+                <div class="auth-buttons">
+                    <button type="submit" class="auth-button">Войти</button>
+                    <a href="#" class="auth-register">Регистрация</a>
+                </div>
+            </form>
         </div>
     </div>
     
     <!-- ВСПЛЫВАЮЩИЕ СООБЩЕНИЯ -->
     <div id="message-container"></div>
     
-    <!-- ТАБЛИЦА -->
+    <!-- ТАБЛИЦА ДЛЯ ДЕСКТОПОВ -->
     {% if contragents %}
         <table>
             <thead>
@@ -419,7 +793,6 @@
             <tbody>
                 {% for contragent in contragents %}
                 <tr>
-                    <!-- ОДНА ЯЧЕЙКА ДЛЯ ОРГАНИЗАЦИИ И ИНН -->
                     <td>
                         <div class="org-name">{{ contragent.org_name }}</div>
                         {% if contragent.inn %}
@@ -460,6 +833,87 @@
                 {% endfor %}
             </tbody>
         </table>
+        
+        <!-- ТАБЛИЦА ДЛЯ МОБИЛЬНЫХ -->
+        <div class="mobile-table">
+            {% for contragent in contragents %}
+            <div class="mobile-card">
+                <div class="mobile-row">
+                    <div class="mobile-label">Организация:</div>
+                    <div class="mobile-value">{{ contragent.org_name }}</div>
+                </div>
+                {% if contragent.inn %}
+                <div class="mobile-row">
+                    <div class="mobile-label">ИНН:</div>
+                    <div class="mobile-value">{{ contragent.inn }}</div>
+                </div>
+                {% endif %}
+                {% if contragent.contact_person %}
+                <div class="mobile-row">
+                    <div class="mobile-label">Контактное лицо:</div>
+                    <div class="mobile-value">{{ contragent.contact_person }}</div>
+                </div>
+                {% endif %}
+                {% if contragent.position %}
+                <div class="mobile-row">
+                    <div class="mobile-label">Должность:</div>
+                    <div class="mobile-value">{{ contragent.position }}</div>
+                </div>
+                {% endif %}
+                {% if contragent.address %}
+                <div class="mobile-row">
+                    <div class="mobile-label">Адрес:</div>
+                    <div class="mobile-value">{{ contragent.address }}</div>
+                </div>
+                {% endif %}
+                {% if contragent.phones %}
+                <div class="mobile-row">
+                    <div class="mobile-label">Телефоны:</div>
+                    <div class="mobile-value">
+                        <ul class="mobile-contacts">
+                            {% for phone in contragent.phones[:3] %}
+                                <li>{{ phone.number }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+                {% if contragent.emails %}
+                <div class="mobile-row">
+                    <div class="mobile-label">Email:</div>
+                    <div class="mobile-value">
+                        <ul class="mobile-contacts">
+                            {% for email in contragent.emails[:3] %}
+                                <li>{{ email.address }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+                {% if contragent.websites %}
+                <div class="mobile-row">
+                    <div class="mobile-label">Сайты:</div>
+                    <div class="mobile-value">
+                        <ul class="mobile-contacts">
+                            {% for site in contragent.websites[:3] %}
+                                <li>{{ site.url }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="mobile-row">
+                    <div class="mobile-label">Действия:</div>
+                    <div class="mobile-value">
+                        <div class="action-buttons" style="justify-content: flex-end;">
+                            <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
+                            <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     {% else %}
         <div class="empty">
             <h3>Контрагентов не найдено</h3>
@@ -516,9 +970,29 @@
                         showMessage(data.message, 'danger');
                     }
                 })
-                .catch(error => showMessage('Ошибка при удалении', 'danger'));
+                .catch(error => showMessage('Ошибка при удаления', 'danger'));
             }
         }
+        
+        // Базовая обработка формы авторизации
+        document.querySelector('.auth-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const login = this.querySelector('input[type="text"]').value;
+            const password = this.querySelector('input[type="password"]').value;
+            
+            if (!login || !password) {
+                showMessage('Введите логин и пароль', 'danger');
+                return;
+            }
+            
+            showMessage('Авторизация... (функционал в разработке)', 'success');
+        });
+        
+        // Обработка регистрации
+        document.querySelector('.auth-register').addEventListener('click', function(e) {
+            e.preventDefault();
+            showMessage('Регистрация... (функционал в разработке)', 'success');
+        });
         
         // Автофокус на поиск
         document.getElementById('search_query').focus();
