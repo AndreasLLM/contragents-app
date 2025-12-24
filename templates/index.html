@@ -759,165 +759,198 @@
         
         <!-- ПРАВАЯ ЧАСТЬ - АВТОРИЗАЦИЯ/РЕГИСТРАЦИЯ (теперь справа на десктопе) -->
         <div class="auth-panel">
-            <form class="auth-form">
-                <div class="auth-fields">
-                    <input type="text" class="auth-input" placeholder="Логин" required>
-                    <input type="password" class="auth-input" placeholder="Пароль" required>
+            {% if user %}
+                <!-- Если пользователь авторизован -->
+                <div class="auth-form">
+                    <div class="auth-fields">
+                        <div style="color: white; font-weight: 600; margin-bottom: 10px;">
+                            Вы вошли как:<br>
+                            <span style="font-size: 16px;">{{ user.username }}</span>
+                        </div>
+                        <div style="color: white; font-size: 12px;">
+                            Добро пожаловать!
+                        </div>
+                    </div>
+                    <div class="auth-buttons">
+                        <a href="{{ url_for('logout') }}" class="auth-button" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
+                            Выйти
+                        </a>
+                    </div>
                 </div>
-                <div class="auth-buttons">
-                    <button type="submit" class="auth-button">Войти</button>
-                    <a href="#" class="auth-register">Регистрация</a>
-                </div>
-            </form>
+            {% else %}
+                <!-- Если пользователь не авторизован -->
+                <form class="auth-form" id="authForm">
+                    <div class="auth-fields">
+                        <input type="text" id="authUsername" class="auth-input" placeholder="Логин" required>
+                        <input type="password" id="authPassword" class="auth-input" placeholder="Пароль" required>
+                    </div>
+                    <div class="auth-buttons">
+                        <button type="button" id="loginButton" class="auth-button">Войти</button>
+                        <a href="{{ url_for('register') }}" class="auth-register">Регистрация</a>
+                    </div>
+                </form>
+            {% endif %}
         </div>
     </div>
     
     <!-- ВСПЛЫВАЮЩИЕ СООБЩЕНИЯ -->
     <div id="message-container"></div>
     
-    <!-- ТАБЛИЦА ДЛЯ ДЕСКТОПОВ -->
-    {% if contragents %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Организация, ИНН</th>
-                    <th>Контактное лицо</th>
-                    <th>Должность</th>
-                    <th>Адрес</th>
-                    <th>Телефоны</th>
-                    <th>Email</th>
-                    <th>Сайты</th>
-                    <th>Редактировать</th>
-                </tr>
-            </thead>
-            <tbody>
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    {% if user %}
+        <!-- Пользователь авторизован -->
+        {% if contragents %}
+            <!-- Есть контрагенты - показываем таблицы -->
+            <!-- ТАБЛИЦА ДЛЯ ДЕСКТОПОВ -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Организация, ИНН</th>
+                        <th>Контактное лицо</th>
+                        <th>Должность</th>
+                        <th>Адрес</th>
+                        <th>Телефоны</th>
+                        <th>Email</th>
+                        <th>Сайты</th>
+                        <th>Редактировать</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contragent in contragents %}
+                    <tr>
+                        <td>
+                            <div class="org-name">{{ contragent.org_name }}</div>
+                            {% if contragent.inn %}
+                            <div class="org-inn">ИНН: {{ contragent.inn }}</div>
+                            {% endif %}
+                        </td>
+                        <td>{{ contragent.contact_person or '' }}</td>
+                        <td>{{ contragent.position or '' }}</td>
+                        <td>{{ contragent.address or '' }}</td>
+                        <td>
+                            <ul class="field-list">
+                                {% for phone in contragent.phones[:3] %}
+                                    <li>{{ phone.number }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul class="field-list">
+                                {% for email in contragent.emails[:3] %}
+                                    <li>{{ email.address }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul class="field-list">
+                                {% for site in contragent.websites[:3] %}
+                                    <li>{{ site.url }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td class="actions-cell">
+                            <div class="action-buttons">
+                                <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
+                                <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <!-- ТАБЛИЦА ДЛЯ МОБИЛЬНЫХ -->
+            <div class="mobile-table">
                 {% for contragent in contragents %}
-                <tr>
-                    <td>
-                        <div class="org-name">{{ contragent.org_name }}</div>
-                        {% if contragent.inn %}
-                        <div class="org-inn">ИНН: {{ contragent.inn }}</div>
-                        {% endif %}
-                    </td>
-                    <td>{{ contragent.contact_person or '' }}</td>
-                    <td>{{ contragent.position or '' }}</td>
-                    <td>{{ contragent.address or '' }}</td>
-                    <td>
-                        <ul class="field-list">
-                            {% for phone in contragent.phones[:3] %}
-                                <li>{{ phone.number }}</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td>
-                        <ul class="field-list">
-                            {% for email in contragent.emails[:3] %}
-                                <li>{{ email.address }}</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td>
-                        <ul class="field-list">
-                            {% for site in contragent.websites[:3] %}
-                                <li>{{ site.url }}</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td class="actions-cell">
-                        <div class="action-buttons">
-                            <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
-                            <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
+                <div class="mobile-card">
+                    <div class="mobile-row">
+                        <div class="mobile-label">Организация:</div>
+                        <div class="mobile-value">{{ contragent.org_name }}</div>
+                    </div>
+                    {% if contragent.inn %}
+                    <div class="mobile-row">
+                        <div class="mobile-label">ИНН:</div>
+                        <div class="mobile-value">{{ contragent.inn }}</div>
+                    </div>
+                    {% endif %}
+                    {% if contragent.contact_person %}
+                    <div class="mobile-row">
+                        <div class="mobile-label">Контактное лицо:</div>
+                        <div class="mobile-value">{{ contragent.contact_person }}</div>
+                    </div>
+                    {% endif %}
+                    {% if contragent.position %}
+                    <div class="mobile-row">
+                        <div class="mobile-label">Должность:</div>
+                        <div class="mobile-value">{{ contragent.position }}</div>
+                    </div>
+                    {% endif %}
+                    {% if contragent.address %}
+                    <div class="mobile-row">
+                        <div class="mobile-label">Адрес:</div>
+                        <div class="mobile-value">{{ contragent.address }}</div>
+                    </div>
+                    {% endif %}
+                    {% if contragent.phones %}
+                    <div class="mobile-row">
+                        <div class="mobile-label">Телефоны:</div>
+                        <div class="mobile-value">
+                            <ul class="mobile-contacts">
+                                {% for phone in contragent.phones[:3] %}
+                                    <li>{{ phone.number }}</li>
+                                {% endfor %}
+                            </ul>
                         </div>
-                    </td>
-                </tr>
+                    </div>
+                    {% endif %}
+                    {% if contragent.emails %}
+                    <div class="mobile-row">
+                        <div class="mobile-label">Email:</div>
+                        <div class="mobile-value">
+                            <ul class="mobile-contacts">
+                                {% for email in contragent.emails[:3] %}
+                                    <li>{{ email.address }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if contragent.websites %}
+                    <div class="mobile-row">
+                        <div class="mobile-label">Сайты:</div>
+                        <div class="mobile-value">
+                            <ul class="mobile-contacts">
+                                {% for site in contragent.websites[:3] %}
+                                    <li>{{ site.url }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="mobile-row">
+                        <div class="mobile-label">Действия:</div>
+                        <div class="mobile-value">
+                            <div class="action-buttons" style="justify-content: flex-end;">
+                                <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
+                                <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
-            </tbody>
-        </table>
-        
-        <!-- ТАБЛИЦА ДЛЯ МОБИЛЬНЫХ -->
-        <div class="mobile-table">
-            {% for contragent in contragents %}
-            <div class="mobile-card">
-                <div class="mobile-row">
-                    <div class="mobile-label">Организация:</div>
-                    <div class="mobile-value">{{ contragent.org_name }}</div>
-                </div>
-                {% if contragent.inn %}
-                <div class="mobile-row">
-                    <div class="mobile-label">ИНН:</div>
-                    <div class="mobile-value">{{ contragent.inn }}</div>
-                </div>
-                {% endif %}
-                {% if contragent.contact_person %}
-                <div class="mobile-row">
-                    <div class="mobile-label">Контактное лицо:</div>
-                    <div class="mobile-value">{{ contragent.contact_person }}</div>
-                </div>
-                {% endif %}
-                {% if contragent.position %}
-                <div class="mobile-row">
-                    <div class="mobile-label">Должность:</div>
-                    <div class="mobile-value">{{ contragent.position }}</div>
-                </div>
-                {% endif %}
-                {% if contragent.address %}
-                <div class="mobile-row">
-                    <div class="mobile-label">Адрес:</div>
-                    <div class="mobile-value">{{ contragent.address }}</div>
-                </div>
-                {% endif %}
-                {% if contragent.phones %}
-                <div class="mobile-row">
-                    <div class="mobile-label">Телефоны:</div>
-                    <div class="mobile-value">
-                        <ul class="mobile-contacts">
-                            {% for phone in contragent.phones[:3] %}
-                                <li>{{ phone.number }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                {% endif %}
-                {% if contragent.emails %}
-                <div class="mobile-row">
-                    <div class="mobile-label">Email:</div>
-                    <div class="mobile-value">
-                        <ul class="mobile-contacts">
-                            {% for email in contragent.emails[:3] %}
-                                <li>{{ email.address }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                {% endif %}
-                {% if contragent.websites %}
-                <div class="mobile-row">
-                    <div class="mobile-label">Сайты:</div>
-                    <div class="mobile-value">
-                        <ul class="mobile-contacts">
-                            {% for site in contragent.websites[:3] %}
-                                <li>{{ site.url }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                {% endif %}
-                <div class="mobile-row">
-                    <div class="mobile-label">Действия:</div>
-                    <div class="mobile-value">
-                        <div class="action-buttons" style="justify-content: flex-end;">
-                            <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
-                            <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
-                        </div>
-                    </div>
-                </div>
             </div>
-            {% endfor %}
-        </div>
+        {% else %}
+            <!-- Пользователь авторизован, но контрагентов нет -->
+            <div class="empty">
+                <h3>Контрагентов не найдено</h3>
+                <p>Измените параметры поиска или добавьте контрагента</p>
+            </div>
+        {% endif %}
     {% else %}
+        <!-- Пользователь не авторизован -->
         <div class="empty">
-            <h3>Контрагентов не найдено</h3>
-            <p>Измените параметры поиска или добавьте контрагента</p>
+            <h3>Добро пожаловать в систему "Контрагенты"!</h3>
+            <p>Для работы с контрагентами необходимо <a href="{{ url_for('login') }}" style="color: #5dade2; font-weight: 600;">войти</a> или <a href="{{ url_for('register') }}" style="color: #5dade2; font-weight: 600;">зарегистрироваться</a></p>
         </div>
     {% endif %}
     
@@ -974,25 +1007,52 @@
             }
         }
         
-        // Базовая обработка формы авторизации
-        document.querySelector('.auth-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const login = this.querySelector('input[type="text"]').value;
-            const password = this.querySelector('input[type="password"]').value;
-            
-            if (!login || !password) {
-                showMessage('Введите логин и пароль', 'danger');
-                return;
-            }
-            
-            showMessage('Авторизация... (функционал в разработке)', 'success');
-        });
+        // Авторизация через AJAX
+        const loginButton = document.getElementById('loginButton');
+        if (loginButton) {
+            loginButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('authUsername').value;
+                const password = document.getElementById('authPassword').value;
+                
+                if (!username || !password) {
+                    showMessage('Введите логин и пароль', 'danger');
+                    return;
+                }
+                
+                fetch('/api/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username: username, password: password})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(data.message, 'success');
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        showMessage(data.message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    showMessage('Ошибка при авторизации', 'danger');
+                });
+            });
+        }
         
-        // Обработка регистрации
-        document.querySelector('.auth-register').addEventListener('click', function(e) {
-            e.preventDefault();
-            showMessage('Регистрация... (функционал в разработке)', 'success');
-        });
+        // Обработка Enter в полях авторизации
+        const authPassword = document.getElementById('authPassword');
+        if (authPassword) {
+            authPassword.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const loginButton = document.getElementById('loginButton');
+                    if (loginButton) {
+                        loginButton.click();
+                    }
+                }
+            });
+        }
         
         // Автофокус на поиск
         document.getElementById('search_query').focus();
