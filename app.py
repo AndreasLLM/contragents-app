@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -10,7 +10,16 @@ app.config['SECRET_KEY'] = 'ваш-секретный-ключ-сделайте-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+app.config['STATIC_FOLDER'] = 'static'
+
 db = SQLAlchemy(app)
+
+# ДОБАВЬТЕ ЭТОТ МАРШРУТ ДЛЯ FAVICON
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', 
+                               mimetype='image/vnd.microsoft.icon')
 
 # Модель пользователя
 class User(db.Model):
@@ -86,7 +95,8 @@ def case_insensitive_like(field, value):
 # Главная страница
 @app.route('/')
 def index():
-    search_query = request.args.get('q', '').strip().lower()  # Приводим к нижнему регистру сразу
+    search_query_input = request.args.get('q', '').strip()  # сохраняем как ввел пользователь
+    search_query_lower = search_query_input.lower()  # для поиска в нижнем регистре
     search_field = request.args.get('field', 'all')
     
     if 'user_id' in session:
@@ -95,7 +105,7 @@ def index():
             # Базовый запрос для текущего пользователя
             query = Contragent.query.filter_by(user_id=session['user_id'])
             
-            if search_query:
+            if search_query_lower:  # ИСПРАВЛЕНО: используем search_query_lower
                 if search_field == 'all':
                     # Получаем всех контрагентов пользователя
                     all_contragents = query.options(
@@ -108,35 +118,36 @@ def index():
                     filtered_contragents = []
                     for contragent in all_contragents:
                         # Проверяем основные поля
-                        if (search_query in (contragent.org_name or '').lower() or
-                            search_query in (contragent.inn or '').lower() or
-                            search_query in (contragent.contact_person or '').lower() or
-                            search_query in (contragent.position or '').lower() or
-                            search_query in (contragent.address or '').lower()):
+                        if (search_query_lower in (contragent.org_name or '').lower() or
+                            search_query_lower in (contragent.inn or '').lower() or
+                            search_query_lower in (contragent.contact_person or '').lower() or
+                            search_query_lower in (contragent.position or '').lower() or
+                            search_query_lower in (contragent.address or '').lower()):
                             filtered_contragents.append(contragent)
                             continue
                         
                         # Проверяем телефоны
-                        if any(search_query in phone.number.lower() for phone in contragent.phones):
+                        if any(search_query_lower in phone.number.lower() for phone in contragent.phones):
                             filtered_contragents.append(contragent)
                             continue
                         
                         # Проверяем email
-                        if any(search_query in email.address.lower() for email in contragent.emails):
+                        if any(search_query_lower in email.address.lower() for email in contragent.emails):
                             filtered_contragents.append(contragent)
                             continue
                         
                         # Проверяем сайты
-                        if any(search_query in website.url.lower() for website in contragent.websites):
+                        if any(search_query_lower in website.url.lower() for website in contragent.websites):
                             filtered_contragents.append(contragent)
                             continue
                     
                     # Сортировка по убыванию ID (новые сверху)
                     contragents = sorted(filtered_contragents, key=lambda x: x.id, reverse=True)
                     
+                    # ИСПРАВЛЕНО: передаем search_query_input (оригинальную строку)
                     return render_template('index.html', 
                                         contragents=contragents, 
-                                        search_query=search_query, 
+                                        search_query=search_query_input, 
                                         search_field=search_field,
                                         user=user)
                 
@@ -148,16 +159,16 @@ def index():
                     
                     if search_field == 'org_name':
                         filtered = [c for c in all_contragents 
-                                  if c.org_name and search_query in c.org_name.lower()]
+                                  if c.org_name and search_query_lower in c.org_name.lower()]
                     elif search_field == 'contact_person':
                         filtered = [c for c in all_contragents 
-                                  if c.contact_person and search_query in c.contact_person.lower()]
+                                  if c.contact_person and search_query_lower in c.contact_person.lower()]
                     elif search_field == 'position':
                         filtered = [c for c in all_contragents 
-                                  if c.position and search_query in c.position.lower()]
+                                  if c.position and search_query_lower in c.position.lower()]
                     elif search_field == 'address':
                         filtered = [c for c in all_contragents 
-                                  if c.address and search_query in c.address.lower()]
+                                  if c.address and search_query_lower in c.address.lower()]
                     
                     contragents = sorted(filtered, key=lambda x: x.id, reverse=True)
                     
@@ -165,29 +176,38 @@ def index():
                 # так как они обычно не содержат кириллицу
                 else:
                     if search_field == 'inn':
-                        query = query.filter(Contragent.inn.like(f'%{search_query}%'))
+                        query = query.filter(Contragent.inn.like(f'%{search_query_lower}%'))
                     elif search_field == 'phones':
-                        query = query.join(Phone).filter(Phone.number.like(f'%{search_query}%'))
+                        query = query.join(Phone).filter(Phone.number.like(f'%{search_query_lower}%'))
                     elif search_field == 'emails':
-                        query = query.join(Email).filter(Email.address.like(f'%{search_query}%'))
+                        query = query.join(Email).filter(Email.address.like(f'%{search_query_lower}%'))
                     elif search_field == 'websites':
-                        query = query.join(Website).filter(Website.url.like(f'%{search_query}%'))
+                        query = query.join(Website).filter(Website.url.like(f'%{search_query_lower}%'))
                     
                     contragents = query.order_by(Contragent.id.desc()).all()
+                
+                # ИСПРАВЛЕНО: передаем search_query_input (оригинальную строку)
+                return render_template('index.html', 
+                                    contragents=contragents, 
+                                    search_query=search_query_input, 
+                                    search_field=search_field,
+                                    user=user)
             
             else:
                 # Если нет поискового запроса, просто показываем все
                 contragents = query.order_by(Contragent.id.desc()).all()
-            
-            return render_template('index.html', 
-                                contragents=contragents, 
-                                search_query=search_query, 
-                                search_field=search_field,
-                                user=user)
+                
+                # ИСПРАВЛЕНО: передаем search_query_input (оригинальную строку)
+                return render_template('index.html', 
+                                    contragents=contragents, 
+                                    search_query=search_query_input, 
+                                    search_field=search_field,
+                                    user=user)
     
+    # ИСПРАВЛЕНО: передаем search_query_input (оригинальную строку)
     return render_template('index.html', 
                          contragents=[], 
-                         search_query=search_query, 
+                         search_query=search_query_input, 
                          search_field=search_field,
                          user=None)
 
