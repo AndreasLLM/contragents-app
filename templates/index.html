@@ -16,97 +16,152 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 1400px;
             margin: 0 auto;
-            padding: 30px 20px;
+            padding: 8px 15px;
             background-color: #f8f9fa;
             line-height: 1.4;
         }
         
-        /* ВЕРХНЯЯ ПАНЕЛЬ */
+        /* Верхняя панель */
         .top-panel {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
-            gap: 30px;
-            align-items: start;
-            margin-bottom: 20px;
+            gap: 20px;
+            align-items: end; /* Выровнять по нижнему краю */
+            margin-bottom: 15px;
         }
         
-        /* ЛЕВАЯ СЕКЦИЯ - ПОИСК */
+        /* Левая секция - поиск */
         .search-section {
             display: flex;
-            align-items: flex-start;
+            height: 100%;
         }
         
         .search-panel {
             background: var(--light-blue);
-            padding: 15px;
+            padding: 12px 15px; /* Увеличено для единообразия */
             border-radius: 8px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px; /* Увеличено */
             width: 100%;
             min-width: 350px;
             box-sizing: border-box;
+            height: auto;
         }
         
         .search-row {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
         
         .search-label {
             color: white;
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
             white-space: nowrap;
-            min-width: 100px;
+            min-width: 90px;
             text-align: right;
         }
         
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+        
         .search-input {
-            padding: 10px 12px;
+            padding: 8px 12px;
             border: 1px solid #ffffff;
             border-radius: 5px;
-            font-size: 15px;
+            font-size: 14px;
             box-sizing: border-box;
-            height: 40px;
+            height: 40px; /* Увеличено для единообразия */
             width: 100%;
             background-color: rgba(255, 255, 255, 0.9);
             min-width: 180px;
+            padding-right: 140px;
         }
         
         .search-select {
-            padding: 10px 40px 10px 12px;
+            padding: 8px 40px 8px 10px;
             border: 1px solid #ffffff;
             border-radius: 5px;
-            font-size: 15px;
+            font-size: 14px;
             box-sizing: border-box;
-            height: 40px;
+            height: 40px; /* Увеличено для единообразия */
             width: 100%;
             background-color: rgba(255, 255, 255, 0.9);
             min-width: 180px;
             appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333' width='28' height='28'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333' width='24' height='24'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 24px;
+            background-position: right 8px center;
+            background-size: 20px;
             color: #333;
             cursor: pointer;
         }
         
-        .search-select option {
-            padding-left: 12px;
+        /* Кнопки поиска и очистки */
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #28a745;
+            border: 1px solid #28a745;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            display: none;
+            transition: all 0.2s;
+            font-weight: 500;
+            height: 30px;
+            white-space: nowrap;
         }
         
-        /* ЦЕНТРАЛЬНАЯ СЕКЦИЯ - ЗАГОЛОВОК И КНОПКА */
+        .search-btn:hover {
+            background-color: #218838;
+            border-color: #218838;
+        }
+        
+        .search-clear-btn {
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: 1px solid #6c757d;
+            color: #6c757d;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: none;
+            transition: all 0.2s;
+            font-weight: 500;
+            height: 30px;
+            white-space: nowrap;
+        }
+        
+        .search-clear-btn:hover {
+            background-color: #f0f0f0;
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+        
+        /* Центральная секция - заголовок и кнопка */
         .center-section {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 10px;
             min-width: 300px;
-            justify-content: center;
-            padding-top: 5px;
+            justify-content: flex-end; /* Выровнять по низу */
+            padding-bottom: 5px; /* Добавлено для выравнивания */
         }
         
         h1 {
@@ -114,142 +169,203 @@
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 15px;
-            font-size: 36px;
+            gap: 12px;
+            font-size: 32px;
             font-weight: 700;
+            white-space: nowrap; /* Запретить перенос заголовка */
         }
         
         .icon-title {
-            font-size: 40px;
+            font-size: 36px;
             line-height: 1;
         }
         
-        /* КНОПКА ДОБАВЛЕНИЯ */
+        /* Кнопка добавления */
         .button-add {
             display: inline-flex;
             align-items: center;
             background-color: var(--primary-color);
             color: white;
-            padding: 10px 25px 10px 15px;
+            padding: 10px 20px 10px 12px;
             text-decoration: none;
             border-radius: 8px;
             border: none;
             cursor: pointer;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 500;
             transition: all 0.2s;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             width: fit-content;
-            height: 38px;
+            height: 40px; /* Высота как у полей ввода */
+            font-family: inherit;
+            white-space: nowrap; /* Запретить перенос текста */
         }
         
         .button-add:hover {
             background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
-        /* ПЛЮС В КНОПКЕ */
         .big-plus {
-            font-size: 40px !important;
+            font-size: 28px !important;
             font-weight: bold;
-            margin-right: 12px;
+            margin-right: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100%;
-            transform: translateY(-3px);
+            transform: translateY(-2px);
         }
         
-        /* ПРАВАЯ СЕКЦИЯ - АВТОРИЗАЦИЯ/РЕГИСТРАЦИЯ */
+        /* Правая секция - авторизация/регистрация */
         .auth-panel {
             background: var(--light-blue);
-            padding: 15px;
+            padding: 12px 15px; /* Увеличено для единообразия */
             border-radius: 8px;
             min-width: 350px;
             display: flex;
             align-items: center;
             box-sizing: border-box;
+            height: auto; /* Автоматическая высота для выравнивания */
         }
         
-        .auth-form {
+        /* Стили для авторизованного пользователя */
+        .auth-logged-in {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
             width: 100%;
+            height: 100%;
         }
         
-        .auth-fields {
+        .auth-user-info {
+            flex: 1;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .auth-user-info .username {
+            font-size: 18px;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        
+        .auth-user-info .welcome {
+            font-size: 14px;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+        
+        /* Стили для неавторизованного пользователя */
+        .auth-login-form {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .auth-login-fields {
             display: flex;
             flex-direction: column;
-            gap: 15px;
             flex: 1;
+            padding-right: 15px;
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            gap: 12px; /* Увеличено */
         }
         
-        .auth-input {
-            padding: 10px 12px;
+        .auth-login-input {
+            padding: 8px 12px;
             border: 1px solid #ffffff;
             border-radius: 5px;
             font-size: 14px;
             box-sizing: border-box;
-            height: 40px;
+            height: 40px; /* Увеличено для единообразия */
             background-color: rgba(255, 255, 255, 0.9);
             width: 100%;
         }
         
-        .auth-input:focus {
-            outline: none;
-            border-color: #28a745;
-            background-color: white;
-        }
-        
-        .auth-buttons {
+        .auth-buttons-column {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            align-items: center;
+            margin-left: 15px;
+            min-width: 110px;
+            gap: 12px; /* Увеличено */
             justify-content: center;
+            flex: 0 0 auto;
         }
         
+        /* Общие стили для кнопок авторизации */
         .auth-button {
-            background-color: white;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-            border-radius: 5px;
-            padding: 10px 20px;
-            font-size: 14px;
+            border-radius: 8px !important;
+            padding: 8px 12px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            height: 40px;
+            height: 40px; /* Увеличено для единообразия */
             white-space: nowrap;
             transition: all 0.2s;
-            width: 120px;
+            width: 100%;
+            text-align: center;
+            border: 2px solid;
+            box-sizing: border-box;
         }
         
-        .auth-button:hover {
+        .auth-login-button {
+            background-color: white;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .auth-login-button:hover {
             background-color: #28a745;
             color: white;
             border-color: #28a745;
             transform: translateY(-1px);
         }
         
-        .auth-register {
+        .auth-register-button {
+            background-color: #28a745;
             color: white;
-            font-size: 12px;
-            text-decoration: none;
+            border-color: #28a745;
+        }
+        
+        .auth-register-button:hover {
+            background-color: #218838;
+            border-color: #218838;
+            transform: translateY(-1px);
+        }
+        
+        /* Кнопка выхода */
+        .logout-button {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px !important;
+            padding: 8px 16px;
+            font-size: 14px;
             font-weight: 600;
+            cursor: pointer;
+            height: 40px; /* Увеличено для единообразия */
             white-space: nowrap;
             transition: all 0.2s;
+            min-width: 100px;
+            text-decoration: none;
             text-align: center;
-            width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .auth-register:hover {
-            color: #e9ecef;
-            text-decoration: underline;
+        .logout-button:hover {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+            transform: translateY(-1px);
         }
         
-        /* ТАБЛИЦА - ОБЫЧНАЯ ВЕРСИЯ */
+        /* Таблица */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -259,6 +375,7 @@
             overflow: hidden;
             table-layout: fixed;
             font-size: 13px;
+            margin-top: 10px;
         }
         
         th, td {
@@ -277,6 +394,7 @@
             font-weight: 600;
             font-size: 13px;
             padding: 10px 10px;
+            white-space: nowrap; /* Запретить перенос заголовков */
         }
         
         tr:nth-child(even) {
@@ -287,7 +405,7 @@
             background-color: #e9ecef;
         }
         
-        /* ШИРИНЫ СТОЛБЦОВ */
+        /* Ширина столбцов */
         td:nth-child(1), th:nth-child(1) { width: 22%; }
         td:nth-child(2), th:nth-child(2) { width: 12%; }
         td:nth-child(3), th:nth-child(3) { width: 10%; }
@@ -295,7 +413,7 @@
         td:nth-child(5), th:nth-child(5) { width: 12%; }
         td:nth-child(6), th:nth-child(6) { width: 12%; }
         td:nth-child(7), th:nth-child(7) { width: 12%; }
-        td:nth-child(8), th:nth-child(8) { width: 8%; min-width: 80px; }
+        td:nth-child(8), th:nth-child(8) { width: 8%; min-width: 120px; }
         
         .org-name {
             font-weight: 600;
@@ -308,9 +426,9 @@
             color: #666;
         }
         
-        /* СПИСКИ В ЯЧЕЙКАХ */
+        /* Списки в ячейках */
         .field-list {
-            list-style: none;
+            list-style: none !important;
             padding: 0;
             margin: 0;
             max-height: 100px;
@@ -320,29 +438,34 @@
         .field-list li {
             padding: 2px 0;
             font-size: 12px;
+            list-style-type: none !important;
+            line-height: 1.4;
         }
         
-        /* КНОПКИ ДЕЙСТВИЙ */
+        /* Кнопки действий - ИСПРАВЛЕНО ДЛЯ МАЛЕНЬКИХ ЭКРАНОВ */
         .actions-cell {
             text-align: center;
-            padding: 8px 10px !important;
+            padding: 8px 5px !important; /* Уменьшены отступы */
             vertical-align: middle;
+            min-width: 110px; /* Минимальная ширина */
         }
         
         .action-buttons {
             display: flex;
             flex-direction: row;
-            gap: 6px;
+            gap: 4px; /* Уменьшено */
             align-items: center;
             justify-content: center;
+            flex-wrap: nowrap; /* Запретить перенос */
+            min-width: 100px; /* Минимальная ширина */
         }
         
         .button-action {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 34px;
-            height: 34px;
+            width: 32px; /* Немного уменьшено */
+            height: 32px;
             background-color: white;
             color: var(--action-color);
             border: 1px solid var(--action-color);
@@ -350,6 +473,9 @@
             cursor: pointer;
             font-size: 14px;
             transition: all 0.2s;
+            text-decoration: none;
+            box-sizing: border-box;
+            flex-shrink: 0; /* Запретить сжатие */
         }
         
         .button-action:hover {
@@ -358,12 +484,12 @@
             transform: scale(1.05);
         }
         
-        /* СООБЩЕНИЯ */
+        /* Сообщения */
         .alert {
             padding: 10px 12px;
             border-radius: 5px;
             position: fixed;
-            top: 35px;
+            top: 15px;
             right: 20px;
             z-index: 1000;
             min-width: 280px;
@@ -395,7 +521,7 @@
         
         .empty {
             text-align: center;
-            padding: 30px;
+            padding: 20px;
             color: #6c757d;
             background: white;
             border-radius: 8px;
@@ -403,7 +529,20 @@
             margin-top: 15px;
         }
         
-        /* ТАБЛИЦА ДЛЯ МОБИЛЬНЫХ - КАРТОЧКИ */
+        .clickable-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .clickable-link:hover {
+            text-decoration: underline;
+            color: var(--primary-hover);
+        }
+        
+        /* Таблица для мобильных */
         .mobile-table {
             display: none;
         }
@@ -411,15 +550,17 @@
         .mobile-card {
             background: white;
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 12px;
+            margin-bottom: 12px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            margin-top: 10px;
         }
         
         .mobile-row {
             display: flex;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #eee;
+            align-items: flex-start;
         }
         
         .mobile-row:last-child {
@@ -431,6 +572,8 @@
             color: #495057;
             min-width: 120px;
             flex-shrink: 0;
+            font-size: 14px;
+            line-height: 1.4;
         }
         
         .mobile-value {
@@ -438,25 +581,101 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
             hyphens: auto;
+            font-size: 14px;
+            line-height: 1.4;
         }
         
         .mobile-contacts {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 2px;
+            padding: 0;
+            margin: 0;
         }
         
         .mobile-contacts li {
             word-wrap: break-word;
             overflow-wrap: break-word;
+            list-style-type: none !important;
+            font-size: 13px;
+            line-height: 1.4;
         }
         
-        /* АДАПТИВНОСТЬ */
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .modal-title {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+            font-size: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #495057;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #5dade2;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-alert {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        /* Адаптация */
         @media (max-width: 1400px) {
             .top-panel {
                 grid-template-columns: 1fr;
                 grid-template-rows: auto auto auto;
-                gap: 20px;
+                gap: 15px;
+                align-items: stretch;
             }
             
             .auth-panel {
@@ -465,6 +684,7 @@
                 min-width: auto;
                 width: 100%;
                 max-width: 600px;
+                height: auto;
             }
             
             .center-section {
@@ -472,6 +692,7 @@
                 min-width: auto;
                 align-items: center;
                 padding-top: 0;
+                padding-bottom: 0;
             }
             
             .search-section {
@@ -492,7 +713,28 @@
             }
             
             .search-select {
-                padding: 10px 40px 10px 12px;
+                padding: 8px 40px 8px 10px;
+            }
+            
+            .auth-login-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .auth-login-fields {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+                padding-right: 0;
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+                gap: 10px;
+            }
+            
+            .auth-buttons-column {
+                margin-left: 0;
+                flex-direction: row;
+                justify-content: center;
+                gap: 15px;
             }
         }
         
@@ -500,7 +742,7 @@
             .top-panel {
                 grid-template-columns: 1fr;
                 grid-template-rows: auto auto auto;
-                gap: 20px;
+                gap: 15px;
             }
             
             .auth-panel {
@@ -509,6 +751,7 @@
                 min-width: auto;
                 width: 100%;
                 max-width: 500px;
+                height: auto;
             }
             
             .center-section {
@@ -529,34 +772,84 @@
                 max-width: 500px;
                 margin: 0 auto;
             }
-            
-            .auth-form {
-                flex-direction: column;
-                gap: 15px;
+        }
+        
+        /* Исправление для маленьких экранов */
+        @media (max-width: 900px) {
+            .mobile-value {
+                display: block !important;
             }
             
-            .auth-fields {
-                width: 100%;
+            .mobile-contacts {
+                display: block !important;
             }
             
-            .auth-buttons {
-                flex-direction: row;
-                gap: 20px;
-                width: 100%;
-                justify-content: center;
+            .mobile-contacts li {
+                margin-bottom: 2px;
             }
             
-            .auth-button, .auth-register {
-                width: auto;
+            .field-list li {
+                line-height: 1.4;
+                margin-bottom: 2px;
             }
             
-            .search-select {
-                padding: 10px 40px 10px 12px;
+            /* Исправление для иконок на маленьких экранах */
+            .actions-cell {
+                min-width: 100px !important;
+                padding: 6px 4px !important;
+            }
+            
+            .action-buttons {
+                gap: 3px !important;
+                min-width: 90px !important;
+            }
+            
+            .button-action {
+                width: 28px !important;
+                height: 28px !important;
+                font-size: 12px !important;
+            }
+            
+            th:nth-child(8) {
+                min-width: 100px !important;
+                font-size: 12px !important;
+                padding: 8px 5px !important;
+            }
+        }
+        
+        /* Исправление для переноса на маленьких экранах */
+        @media (max-width: 820px) {
+            .mobile-value {
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+                hyphens: auto !important;
+            }
+            
+            .field-list li {
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+            }
+            
+            .mobile-contacts li {
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+            }
+            
+            td, .mobile-value {
+                max-width: 100% !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            
+            /* Предотвращение переноса заголовка "Редактировать" */
+            th:nth-child(8) {
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
             }
         }
         
         @media (max-width: 992px) {
-            /* Показываем мобильную таблицу и скрываем десктопную */
             table {
                 display: none;
             }
@@ -579,23 +872,38 @@
             }
             
             .search-select {
-                padding: 10px 40px 10px 12px;
+                padding: 8px 40px 8px 10px;
+            }
+            
+            .auth-login-fields {
+                display: none;
+            }
+            
+            .auth-buttons-column {
+                display: none;
+            }
+            
+            .auth-panel .auth-buttons-compact {
+                display: flex;
+                gap: 15px;
+                width: 100%;
+                justify-content: center;
             }
         }
         
         @media (max-width: 768px) {
             body {
-                padding: 15px 10px;
+                padding: 8px 10px;
             }
             
             .top-panel {
-                gap: 15px;
+                gap: 12px;
             }
             
             .search-row {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 8px;
+                gap: 6px;
             }
             
             .search-label {
@@ -603,6 +911,7 @@
                 margin-bottom: 0;
                 min-width: auto;
                 width: 100%;
+                font-size: 13px;
             }
             
             .search-input, .search-select {
@@ -611,45 +920,36 @@
             }
             
             .search-select {
-                padding: 10px 40px 10px 12px;
+                padding: 8px 40px 8px 10px;
             }
             
             .big-plus {
-                font-size: 25px !important;
-                margin-right: 10px;
+                font-size: 22px !important;
+                margin-right: 8px;
             }
             
             .button-add {
-                font-size: 15px;
-                padding: 6px 15px;
-                height: 34px;
-            }
-            
-            .auth-buttons {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .auth-button {
-                width: 100%;
+                font-size: 16px;
+                padding: 6px 12px;
+                height: 36px;
             }
             
             h1 {
-                font-size: 28px;
+                font-size: 26px;
                 flex-direction: column;
-                gap: 5px;
+                gap: 4px;
                 text-align: center;
             }
             
             .icon-title {
-                font-size: 32px;
+                font-size: 30px;
             }
             
             /* Мобильные карточки */
             .mobile-row {
                 flex-direction: column;
-                gap: 5px;
-                padding: 10px 0;
+                gap: 4px;
+                padding: 8px 0;
             }
             
             .mobile-label {
@@ -664,62 +964,87 @@
             
             .mobile-contacts li {
                 font-size: 13px;
-                padding: 3px 0;
-            }
-            
-            .search-panel, .auth-panel {
-                padding: 12px;
-                width: 100%;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 24px;
-            }
-            
-            .icon-title {
-                font-size: 28px;
-            }
-            
-            .button-add {
-                font-size: 14px;
-                padding: 5px 12px;
-                height: 32px;
-            }
-            
-            .big-plus {
-                font-size: 22px !important;
-                margin-right: 8px;
+                padding: 1px 0;
             }
             
             .search-panel, .auth-panel {
                 padding: 10px;
                 width: 100%;
             }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 22px;
+            }
             
-            .search-input, .search-select, .auth-input {
+            .icon-title {
+                font-size: 26px;
+            }
+            
+            .button-add {
                 font-size: 14px;
-                padding: 8px 10px;
+                padding: 5px 10px;
+                height: 34px;
+            }
+            
+            .big-plus {
+                font-size: 20px !important;
+                margin-right: 6px;
+            }
+            
+            .search-panel, .auth-panel {
+                padding: 8px;
+                width: 100%;
+            }
+            
+            .search-input, .search-select, .auth-login-input {
+                font-size: 13px;
+                padding: 6px 10px;
                 height: 36px;
             }
             
             .search-select {
-                padding: 8px 40px 8px 10px;
+                padding: 6px 40px 6px 10px;
             }
             
-            .auth-button {
+            .logout-button, .auth-login-button {
                 height: 36px;
                 font-size: 13px;
-                padding: 8px 15px;
+                padding: 6px 12px;
+            }
+            
+            .auth-user-info .username {
+                font-size: 16px;
+            }
+            
+            .auth-user-info .welcome {
+                font-size: 13px;
+            }
+            
+            /* Еще меньше иконки на очень маленьких экранах */
+            .actions-cell {
+                min-width: 90px !important;
+                padding: 4px 3px !important;
+            }
+            
+            .action-buttons {
+                gap: 2px !important;
+                min-width: 85px !important;
+            }
+            
+            .button-action {
+                width: 26px !important;
+                height: 26px !important;
+                font-size: 11px !important;
             }
         }
     </style>
 </head>
 <body>
-    <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+    <!-- Верхняя панель -->
     <div class="top-panel">
-        <!-- ЛЕВАЯ ЧАСТЬ - ПОИСК (теперь слева на десктопе) -->
+        <!-- Левая часть - поиск -->
         <div class="search-section">
             <div class="search-panel">
                 <div class="search-row">
@@ -739,69 +1064,154 @@
                 
                 <div class="search-row">
                     <span class="search-label">Поиск:</span>
-                    <input type="text" 
-                           id="search_query" 
-                           name="q" 
-                           class="search-input" 
-                           placeholder="Введите текст..."
-                           value="{{ search_query }}">
+                    <div class="search-input-wrapper">
+                        <input type="text" 
+                               id="search_query" 
+                               name="q" 
+                               class="search-input" 
+                               placeholder="Введите текст..."
+                               value="{{ search_query }}">
+                        <!-- Кнопка поиска -->
+                        <button type="button" class="search-btn" onclick="performSearch()" title="Поиск">
+                            Поиск
+                        </button>
+                        <!-- Кнопка очистки -->
+                        {% if user and search_query %}
+                        <button type="button" class="search-clear-btn" onclick="clearSearch()" title="Очистить поиск">
+                            Очистить
+                        </button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
         
-        <!-- ЦЕНТРАЛЬНАЯ ЧАСТЬ - ЗАГОЛОВОК И КНОПКА -->
+        <!-- Центральная часть - заголовок и кнопка -->
         <div class="center-section">
             <h1><span class="icon-title">👔</span> Контрагенты</h1>
-            <a href="{{ url_for('add_contragent') }}" class="button-add">
-                <span class="big-plus">+</span> Добавить нового контрагента
-            </a>
+            {% if user %}
+                <a href="{{ url_for('add_contragent') }}" class="button-add">
+                    <span class="big-plus">+</span> Добавить нового контрагента
+                </a>
+            {% else %}
+                <a href="#" onclick="showLoginModal(); return false;" class="button-add">
+                    <span class="big-plus">+</span> Добавить нового контрагента
+                </a>
+            {% endif %}
         </div>
         
-        <!-- ПРАВАЯ ЧАСТЬ - АВТОРИЗАЦИЯ/РЕГИСТРАЦИЯ (теперь справа на десктопе) -->
+        <!-- Правая часть - авторизация/регистрация -->
         <div class="auth-panel">
             {% if user %}
                 <!-- Если пользователь авторизован -->
-                <div class="auth-form">
-                    <div class="auth-fields">
-                        <div style="color: white; font-weight: 600; margin-bottom: 10px;">
-                            Вы вошли как:<br>
-                            <span style="font-size: 16px;">{{ user.username }}</span>
-                        </div>
-                        <div style="color: white; font-size: 12px;">
-                            Добро пожаловать!
-                        </div>
+                <div class="auth-logged-in">
+                    <div class="auth-user-info">
+                        <div class="username">{{ user.username }}</div>
+                        <div class="welcome">Добро пожаловать!</div>
                     </div>
-                    <div class="auth-buttons">
-                        <a href="{{ url_for('logout') }}" class="auth-button" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
-                            Выйти
-                        </a>
-                    </div>
+                    <a href="{{ url_for('logout') }}" class="logout-button">
+                        Выйти
+                    </a>
                 </div>
             {% else %}
                 <!-- Если пользователь не авторизован -->
-                <form class="auth-form" id="authForm">
-                    <div class="auth-fields">
-                        <input type="text" id="authUsername" class="auth-input" placeholder="Логин" required>
-                        <input type="password" id="authPassword" class="auth-input" placeholder="Пароль" required>
+                <div class="auth-login-form">
+                    <div class="auth-login-fields">
+                        <input type="text" 
+                               id="topLoginUsername" 
+                               class="auth-login-input" 
+                               placeholder="Логин">
+                        <input type="password" 
+                               id="topLoginPassword" 
+                               class="auth-login-input" 
+                               placeholder="Пароль">
                     </div>
-                    <div class="auth-buttons">
-                        <button type="button" id="loginButton" class="auth-button">Войти</button>
-                        <a href="{{ url_for('register') }}" class="auth-register">Регистрация</a>
+                    <div class="auth-buttons-column">
+                        <button onclick="showRegisterModal()" class="auth-button auth-register-button">
+                            Регистрация
+                        </button>
+                        <button onclick="loginFromTopPanel()" class="auth-button auth-login-button">
+                            Войти
+                        </button>
                     </div>
-                </form>
+                    <div class="auth-buttons-compact" style="display: none;">
+                        <button onclick="showRegisterModal()" class="auth-button auth-register-button">
+                            Регистрация
+                        </button>
+                        <button onclick="showLoginModal()" class="auth-button auth-login-button">Войти</button>
+                    </div>
+                </div>
             {% endif %}
         </div>
     </div>
     
-    <!-- ВСПЛЫВАЮЩИЕ СООБЩЕНИЯ -->
+    <!-- Всплывающие сообщения -->
     <div id="message-container"></div>
     
-    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <!-- Модальное окно входа -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Вход в систему</h3>
+            <div id="loginMessage" class="modal-alert" style="display: none;"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Имя пользователя:</label>
+                    <input type="text" id="loginUsername" name="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Пароль:</label>
+                    <input type="password" id="loginPassword" name="password" class="form-control" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="auth-button auth-login-button" style="width: 100%;">Войти</button>
+                    <button type="button" onclick="hideLoginModal()" class="auth-button auth-login-button" style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
+                        Отмена
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Модальное окно регистрации -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Регистрация</h3>
+            <div id="registerMessage" class="modal-alert" style="display: none;"></div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerUsername">Имя пользователя:</label>
+                    <input type="text" id="registerUsername" name="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email (необязательно):</label>
+                    <input type="email" id="registerEmail" name="email" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Пароль:</label>
+                    <input type="password" id="registerPassword" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Подтвердите пароль:</label>
+                    <input type="password" id="registerConfirmPassword" name="confirm_password" class="form-control" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="auth-button auth-register-button" style="width: 100%;">
+                        Зарегистрироваться
+                    </button>
+                    <button type="button" onclick="hideRegisterModal()" class="auth-button auth-login-button" style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
+                        Отмена
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Основной контент -->
     {% if user %}
         <!-- Пользователь авторизован -->
         {% if contragents %}
             <!-- Есть контрагенты - показываем таблицы -->
-            <!-- ТАБЛИЦА ДЛЯ ДЕСКТОПОВ -->
+            <!-- Таблица для десктопов -->
             <table>
                 <thead>
                     <tr>
@@ -851,6 +1261,7 @@
                         <td class="actions-cell">
                             <div class="action-buttons">
                                 <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
+                                <a href="{{ url_for('add_contragent') }}?copy_id={{ contragent.id }}" class="button-action button-copy" title="Добавление нового контрагента копированием этого">⧉</a>
                                 <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
                             </div>
                         </td>
@@ -859,7 +1270,7 @@
                 </tbody>
             </table>
             
-            <!-- ТАБЛИЦА ДЛЯ МОБИЛЬНЫХ -->
+            <!-- Таблица для мобильных -->
             <div class="mobile-table">
                 {% for contragent in contragents %}
                 <div class="mobile-card">
@@ -932,6 +1343,7 @@
                         <div class="mobile-value">
                             <div class="action-buttons" style="justify-content: flex-end;">
                                 <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
+                                <a href="{{ url_for('add_contragent') }}?copy_id={{ contragent.id }}" class="button-action button-copy" title="Добавление нового контрагента копированием этого">⧉</a>
                                 <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
                             </div>
                         </div>
@@ -950,7 +1362,11 @@
         <!-- Пользователь не авторизован -->
         <div class="empty">
             <h3>Добро пожаловать в систему "Контрагенты"!</h3>
-            <p>Для работы с контрагентами необходимо <a href="{{ url_for('login') }}" style="color: #5dade2; font-weight: 600;">войти</a> или <a href="{{ url_for('register') }}" style="color: #5dade2; font-weight: 600;">зарегистрироваться</a></p>
+            <p>Для работы с контрагентами необходимо 
+                <span onclick="showLoginModal()" class="clickable-link">войти</span> 
+                или 
+                <span onclick="showRegisterModal()" class="clickable-link">зарегистрироваться</span>
+            </p>
         </div>
     {% endif %}
     
@@ -969,6 +1385,57 @@
                 }
             }, 3000);
         }
+        
+        // Функция очистки поиска
+        function clearSearch() {
+            document.getElementById('search_query').value = '';
+            updateSearchButtons();
+            performSearch();
+        }
+        
+        // Обновление видимости кнопок поиска и очистки
+        function updateSearchButtons() {
+            const searchInput = document.getElementById('search_query');
+            const searchBtn = document.querySelector('.search-btn');
+            const clearBtn = document.querySelector('.search-clear-btn');
+            const user = {{ 'true' if user else 'false' }};
+            const hasSearchQuery = searchInput.value.trim() !== '';
+            const hasExistingQuery = "{{ search_query }}" !== '';
+            
+            if (searchBtn) {
+                if (user && hasSearchQuery) {
+                    searchBtn.style.display = 'block';
+                } else {
+                    searchBtn.style.display = 'none';
+                }
+            }
+            
+            if (clearBtn) {
+                if (user && hasExistingQuery) {
+                    clearBtn.style.display = 'block';
+                } else {
+                    clearBtn.style.display = 'none';
+                }
+            }
+        }
+        
+        // Обновление поиска при вводе
+        document.getElementById('search_query').addEventListener('input', function() {
+            updateSearchButtons();
+        });
+        
+        // Инициализация кнопок при загрузке
+        window.addEventListener('load', function() {
+            updateSearchButtons();
+            
+            const searchInput = document.getElementById('search_query');
+            if (searchInput && searchInput.value.trim() !== '' && {{ 'true' if user else 'false' }}) {
+                const searchBtn = document.querySelector('.search-btn');
+                if (searchBtn) {
+                    searchBtn.style.display = 'block';
+                }
+            }
+        });
         
         // Поиск при нажатии Enter
         document.getElementById('search_query').addEventListener('keypress', function(e) {
@@ -1007,55 +1474,171 @@
             }
         }
         
-        // Авторизация через AJAX
-        const loginButton = document.getElementById('loginButton');
-        if (loginButton) {
-            loginButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const username = document.getElementById('authUsername').value;
-                const password = document.getElementById('authPassword').value;
-                
-                if (!username || !password) {
-                    showMessage('Введите логин и пароль', 'danger');
-                    return;
+        // Функции для модальных окон
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('loginMessage').style.display = 'none';
+        }
+        
+        function hideLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('loginMessage').style.display = 'none';
+        }
+        
+        function showRegisterModal() {
+            document.getElementById('registerModal').style.display = 'flex';
+            document.getElementById('registerMessage').style.display = 'none';
+        }
+        
+        function hideRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+            document.getElementById('registerMessage').style.display = 'none';
+        }
+        
+        // Закрытие модальных окон при клике вне их
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                hideLoginModal();
+                hideRegisterModal();
+            }
+        }
+        
+        // AJAX вход из верхней панели
+        function loginFromTopPanel() {
+            const username = document.getElementById('topLoginUsername').value;
+            const password = document.getElementById('topLoginPassword').value;
+            
+            if (!username || !password) {
+                showMessage('Введите логин и пароль', 'danger');
+                return;
+            }
+            
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    location.reload();
+                } else {
+                    showMessage(data.message, 'danger');
                 }
-                
-                fetch('/api/login', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({username: username, password: password})
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showMessage(data.message, 'success');
-                        setTimeout(() => window.location.reload(), 1000);
-                    } else {
-                        showMessage(data.message, 'danger');
-                    }
-                })
-                .catch(error => {
-                    showMessage('Ошибка при авторизации', 'danger');
-                });
+            })
+            .catch(error => {
+                showMessage('Ошибка соединения с сервером', 'danger');
             });
         }
         
-        // Обработка Enter в полях авторизации
-        const authPassword = document.getElementById('authPassword');
-        if (authPassword) {
-            authPassword.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    const loginButton = document.getElementById('loginButton');
-                    if (loginButton) {
-                        loginButton.click();
-                    }
+        // Обработка нажатия Enter в полях ввода верхней панели
+        document.getElementById('topLoginPassword')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginFromTopPanel();
+            }
+        });
+        
+        // AJAX вход из модального окна
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('loginMessage');
+                messageDiv.textContent = data.message;
+                messageDiv.className = `modal-alert alert-${data.success ? 'success' : 'danger'}`;
+                messageDiv.style.display = 'block';
+                
+                if (data.success) {
+                    location.reload();
                 }
+            })
+            .catch(error => {
+                const messageDiv = document.getElementById('loginMessage');
+                messageDiv.textContent = 'Ошибка соединения с сервером';
+                messageDiv.className = 'modal-alert alert-danger';
+                messageDiv.style.display = 'block';
             });
+        });
+        
+        // AJAX регистрация
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                const messageDiv = document.getElementById('registerMessage');
+                messageDiv.textContent = 'Пароли не совпадают';
+                messageDiv.className = 'modal-alert alert-danger';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('registerMessage');
+                messageDiv.textContent = data.message;
+                messageDiv.className = `modal-alert alert-${data.success ? 'success' : 'danger'}`;
+                messageDiv.style.display = 'block';
+                
+                if (data.success) {
+                    hideRegisterModal();
+                    showLoginModal();
+                    document.getElementById('loginUsername').value = username;
+                    document.getElementById('loginPassword').value = '';
+                }
+            })
+            .catch(error => {
+                const messageDiv = document.getElementById('registerMessage');
+                messageDiv.textContent = 'Ошибка соединения с сервером';
+                messageDiv.className = 'modal-alert alert-danger';
+                messageDiv.style.display = 'block';
+            });
+        });
+        
+        // Автоматическое переключение между формой входа и кнопками на маленьких экранах
+        function checkScreenSize() {
+            const formFields = document.querySelector('.auth-login-fields');
+            const buttonsColumn = document.querySelector('.auth-buttons-column');
+            const compactButtons = document.querySelector('.auth-buttons-compact');
+            
+            if (window.innerWidth <= 992) {
+                if (formFields) formFields.style.display = 'none';
+                if (buttonsColumn) buttonsColumn.style.display = 'none';
+                if (compactButtons) compactButtons.style.display = 'flex';
+            } else {
+                if (formFields) formFields.style.display = 'flex';
+                if (buttonsColumn) buttonsColumn.style.display = 'flex';
+                if (compactButtons) compactButtons.style.display = 'none';
+            }
         }
         
-        // Автофокус на поиск
-        document.getElementById('search_query').focus();
+        window.addEventListener('resize', checkScreenSize);
+        window.addEventListener('load', checkScreenSize);
         
         // Flash сообщения
         {% with messages = get_flashed_messages(with_categories=true) %}
