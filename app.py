@@ -4,12 +4,33 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
 from sqlalchemy import or_, func, text
+from dotenv import load_dotenv
+
+# Загружаем переменные окружения из .env файла для локальной разработки
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'ваш-секретный-ключ-сделайте-его-очень-длинным-и-сложным'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Безопасная конфигурация для Render
+# Получаем секретный ключ из переменных окружения (безопаснее) или используем fallback
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-очень-длинный-секретный-ключ-измените-это')
+
+# Умная настройка БД: на Render используем PostgreSQL, локально - SQLite
+database_url = os.environ.get('DATABASE_URL')
+
+if database_url:
+    # Render предоставляет DATABASE_URL для PostgreSQL, начинается с postgres://
+    # SQLAlchemy требует postgresql://, поэтому делаем замену
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    print(f"Используется PostgreSQL: {database_url[:50]}...")  # Для отладки
+else:
+    # Локальная разработка - используем SQLite
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
+    print("Используется SQLite (локальная разработка)")
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['STATIC_FOLDER'] = 'static'
 
 db = SQLAlchemy(app)
@@ -499,20 +520,41 @@ def delete_contragent(id):
         db.session.rollback()
         return jsonify({'success': False, 'message': f'Ошибка при удалении: {str(e)}'})
 
-# Создание тестового пользователя для разработки
-def create_test_user():
+# Создание тестового пользователя для разработки и инициализация БД
+def init_database():
     with app.app_context():
-        if User.query.count() == 0:
-            test_user = User(username='admin', email='admin@example.com')
-            test_user.set_password('admin123')
-            db.session.add(test_user)
-            db.session.commit()
-            print("Создан тестовый пользователь:")
-            print("Логин: admin")
-            print("Пароль: admin123")
+        try:
+            # Создаем таблицы
+            db.create_all()
+            print("✅ Таблицы базы данных созданы/проверены")
+            
+            # Создаем тестового пользователя только если таблица пуста
+            if User.query.count() == 0:
+                test_user = User(username='admin', email='admin@example.com')
+                test_user.set_password('admin123')
+                db.session.add(test_user)
+                db.session.commit()
+                print("✅ Создан тестовый пользователь:")
+                print("   Логин: admin")
+                print("   Пароль: admin123")
+            else:
+                print(f"ℹ️  В базе уже есть {User.query.count()} пользователей")
+                
+        except Exception as e:
+            print(f"❌ Ошибка при инициализации базы данных: {e}")
+
+# Инициализируем базу данных при запуске
+init_database()
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        create_test_user()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Получаем порт из переменной окружения PORT (Render сам установит)
+    # Если PORT не задан, используем 5000 для локальной разработки
+    port = int(os.environ.get('PORT', 5000))
+    
+    # Запускаем приложение
+    # ВНИМАНИЕ: debug=True только для локальной разработки!
+    # На Render нужно использовать debug=False
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
+    print(f"🚀 Приложение запущено на порту {port}, debug={debug_mode}")
