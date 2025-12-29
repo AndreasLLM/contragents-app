@@ -26,17 +26,16 @@ if database_url:
         database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
     
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    # Для psycopg3 необходимо указать poolclass=NullPool
+    # Важно: для psycopg3 необходимо указать poolclass=NullPool
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-        'pool_recycle': 300,  # Пересоздавать соединения каждые 5 минут
-        'pool_pre_ping': True,  # Проверять соединение перед использованием
-        'poolclass': NullPool,  # Ключевая настройка для совместимости с psycopg3
+        'pool_recycle': 300,
+        'pool_pre_ping': True,
+        'poolclass': NullPool,
     }
-    print(f"Используется PostgreSQL (с psycopg3): {database_url[:50]}...")
+    print(f"Используется PostgreSQL (с psycopg3): {database_url[:50]}...")  # Проверьте вывод!
 else:
     # Локальная разработка - используем SQLite
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
-    # Для SQLite не нужны особые настройки пула
     print("Используется SQLite (локальная разработка)")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
