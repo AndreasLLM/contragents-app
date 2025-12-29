@@ -1,7 +1,7 @@
 Flask==2.3.3
 Flask-SQLAlchemy==3.0.5
-SQLAlchemy==2.0.31  # ← ОБНОВЛЕНО! (поддерживает Python 3.13)
-psycopg[binary,pool]==3.3.2
+SQLAlchemy==2.0.31
+psycopg2-binary==2.9.9  # <-- Ключевое изменение
 python-dotenv==1.0.0
 gunicorn==21.2.0
 Werkzeug==2.3.7

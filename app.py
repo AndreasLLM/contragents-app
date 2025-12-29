@@ -5,7 +5,6 @@ from datetime import datetime
 import os
 from sqlalchemy import or_, func, text
 from dotenv import load_dotenv
-from sqlalchemy.pool import NullPool
 
 # Загружаем переменные окружения из .env файла для локальной разработки
 load_dotenv()
@@ -20,21 +19,16 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-очень-дл�
 database_url = os.environ.get('DATABASE_URL')
 
 if database_url:
-    # Render предоставляет DATABASE_URL для PostgreSQL, начинается с postgres://
-    # Для psycopg3 требуется диалект postgresql+psycopg://
+    # 1. Меняем протокол для psycopg2-binary
     if database_url.startswith('postgres://'):
-        database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
     
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    # Важно: для psycopg3 необходимо указать poolclass=NullPool
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-        'pool_recycle': 300,
-        'pool_pre_ping': True,
-        'poolclass': NullPool,
-    }
-    print(f"Используется PostgreSQL (с psycopg3): {database_url[:50]}...")  # Проверьте вывод!
+    # 2. УДАЛИТЕ или закомментируйте весь блок SQLALCHEMY_ENGINE_OPTIONS
+    # Для psycopg2-binary он не нужен и может вызывать ошибки.
+    # app.config['SQLALCHEMY_ENGINE_OPTIONS'] = { ... }
+    print(f"Используется PostgreSQL (с psycopg2): {database_url[:50]}...")
 else:
-    # Локальная разработка - используем SQLite
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
     print("Используется SQLite (локальная разработка)")
 
