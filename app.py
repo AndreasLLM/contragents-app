@@ -13,55 +13,47 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-ключ')
 
 # --- НАСТРОЙКА БАЗЫ ДАННЫХ ---
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-# Добавьте в начало файла (после импортов)
-import sqlalchemy.dialects.postgresql
-import psycopg  # Это psycopg3!
-
-# Монки-патч: заменяем стандартный импорт psycopg2 на psycopg
-def use_psycopg3():
-    return psycopg
-
-# Подменяем метод импорта в SQLAlchemy
-sqlalchemy.dialects.postgresql.psycopg2.import_dbapi = use_psycopg3
-
 database_url = os.environ.get('DATABASE_URL')
-engine = None
 
 if database_url:
-    # Ключевое исправление для psycopg3
+    # КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Обрабатываем оба формата Render
     if database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
+    elif database_url.startswith('postgresql://'):
+        # Render теперь может использовать postgresql://, нужно менять на psycopg
+        database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
     
-    # ЯВНО создаем движок с диалектом psycopg
-    engine = create_engine(
-        database_url,
-        pool_recycle=300,
-        pool_pre_ping=True,
-        poolclass=NullPool,
-        connect_args={
-            "sslmode": "require"
-        }
-    )
+    # Отладочный вывод полного URL (без пароля для безопасности)
+    safe_url = database_url
+    if '@' in database_url:
+        # Скрываем пароль в логах
+        parts = database_url.split('@')
+        user_pass = parts[0].split(':')
+        if len(user_pass) > 2:
+            user_pass[2] = '***'  # Пароль
+        safe_url = ':'.join(user_pass) + '@' + '@'.join(parts[1:])
     
-    # Передаем созданный движок в SQLAlchemy
+    print(f"✅ Используется PostgreSQL с диалектом psycopg3")
+    print(f"✅ Преобразованный URL: {safe_url[:100]}...")
+    
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-        'creator': lambda: engine.connect()
+        'pool_recycle': 300,
+        'pool_pre_ping': True,
+        'poolclass': NullPool,
+        'connect_args': {
+            "sslmode": "require"
+        }
     }
-    
-    print(f"✅ Используется PostgreSQL с явным движком psycopg3: {database_url[:50]}...")
 else:
     # Локальная разработка
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
     print("Используется SQLite (локальная разработка)")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # --- КОНЕЦ НАСТРОЙКИ БАЗЫ ---
 
-# Инициализируем db ПОСЛЕ настройки движка
 db = SQLAlchemy(app)
 # ... остальной код (модели, роуты) остаётся без изменений ...
 
