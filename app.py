@@ -16,6 +16,17 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-ключ')
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+# Добавьте в начало файла (после импортов)
+import sqlalchemy.dialects.postgresql
+import psycopg  # Это psycopg3!
+
+# Монки-патч: заменяем стандартный импорт psycopg2 на psycopg
+def use_psycopg3():
+    return psycopg
+
+# Подменяем метод импорта в SQLAlchemy
+sqlalchemy.dialects.postgresql.psycopg2.import_dbapi = use_psycopg3
+
 database_url = os.environ.get('DATABASE_URL')
 engine = None
 
