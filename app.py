@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 from sqlalchemy import or_, func, text
 from dotenv import load_dotenv
+from sqlalchemy.pool import NullPool
 
 # Загружаем переменные окружения из .env файла для локальной разработки
 load_dotenv()
@@ -18,25 +19,33 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-очень-дл�
 # Умная настройка БД: на Render используем PostgreSQL, локально - SQLite
 database_url = os.environ.get('DATABASE_URL')
 
+# Умная настройка БД: на Render используем PostgreSQL, локально - SQLite
+database_url = os.environ.get('DATABASE_URL')
+
 if database_url:
     # Render предоставляет DATABASE_URL для PostgreSQL, начинается с postgres://
-    # SQLAlchemy требует postgresql://, поэтому делаем замену
+    # Для psycopg3 требуется диалект postgresql+psycopg://
     if database_url.startswith('postgres://'):
-        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
+    
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    # Важно: для psycopg3 необходимо указать poolclass=NullPool
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_recycle': 300,  # Пересоздавать соединения каждые 5 минут
         'pool_pre_ping': True,  # Проверять соединение перед использованием
+        'poolclass': NullPool,  # Ключевая настройка для совместимости с psycopg3
     }
-    print(f"Используется PostgreSQL: {database_url[:50]}...")  # Для отладки
+    print(f"Используется PostgreSQL (с psycopg3): {database_url[:50]}...")
 else:
     # Локальная разработка - используем SQLite
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
+    # Для SQLite не нужны особые настройки пула, как для psycopg3
     print("Используется SQLite (локальная разработка)")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_POOL_SIZE'] = 10
-app.config['SQLALCHEMY_MAX_OVERFLOW'] = 20
+# Для продакшена с PostgreSQL настройки POOL_SIZE и MAX_OVERFLOW
+# задаются внутри SQLALCHEMY_ENGINE_OPTIONS, если нужны.
+# Для локального SQLite их можно оставить, но они не будут использоваться.
 
 db = SQLAlchemy(app)
 
