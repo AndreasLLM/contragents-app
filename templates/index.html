@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Контрагенты</title>
     <style>
         :root {
@@ -12,47 +12,70 @@
             --action-color: #5dade2;
         }
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 8px 15px;
-            background-color: #f8f9fa;
-            line-height: 1.4;
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        /* Верхняя панель */
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            margin: 0;
+            padding: 8px 10px;
+            background-color: #f8f9fa;
+            line-height: 1.4;
+            min-height: 100vh;
+        }
+        
+        /* Контейнер для ограничения ширины */
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5px;
+        }
+        
+        /* Верхняя панель - изменен порядок для мобильных */
         .top-panel {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
-            gap: 20px;
-            align-items: end; /* Выровнять по нижнему краю */
+            gap: 15px;
+            align-items: end;
             margin-bottom: 15px;
+            width: 100%;
         }
         
         /* Левая секция - поиск */
         .search-section {
             display: flex;
-            height: 100%;
+            min-width: 0;
+            align-items: flex-end;
         }
         
         .search-panel {
             background: var(--light-blue);
-            padding: 12px 15px; /* Увеличено для единообразия */
+            padding: 12px 15px;
             border-radius: 8px;
             display: flex;
             flex-direction: column;
-            gap: 12px; /* Увеличено */
+            gap: 12px;
             width: 100%;
-            min-width: 350px;
+            min-width: 300px;
             box-sizing: border-box;
-            height: auto;
+            position: relative;
+            overflow: hidden;
         }
         
         .search-row {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         
         .search-label {
@@ -60,15 +83,15 @@
             font-weight: 600;
             font-size: 14px;
             white-space: nowrap;
-            min-width: 90px;
+            min-width: 70px;
             text-align: right;
         }
         
         .search-input-wrapper {
             position: relative;
             width: 100%;
-            display: flex;
-            align-items: center;
+            min-width: 0;
+            flex: 1;
         }
         
         .search-input {
@@ -77,23 +100,21 @@
             border-radius: 5px;
             font-size: 14px;
             box-sizing: border-box;
-            height: 40px; /* Увеличено для единообразия */
+            height: 40px;
             width: 100%;
             background-color: rgba(255, 255, 255, 0.9);
-            min-width: 180px;
             padding-right: 140px;
         }
         
         .search-select {
-            padding: 8px 40px 8px 10px;
+            padding: 8px 35px 8px 10px;
             border: 1px solid #ffffff;
             border-radius: 5px;
             font-size: 14px;
             box-sizing: border-box;
-            height: 40px; /* Увеличено для единообразия */
+            height: 40px;
             width: 100%;
             background-color: rgba(255, 255, 255, 0.9);
-            min-width: 180px;
             appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333' width='24' height='24'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
@@ -103,7 +124,7 @@
             cursor: pointer;
         }
         
-        /* Кнопки поиска и очистки */
+        /* Кнопки поиска */
         .search-btn {
             position: absolute;
             right: 5px;
@@ -121,6 +142,7 @@
             font-weight: 500;
             height: 30px;
             white-space: nowrap;
+            z-index: 2;
         }
         
         .search-btn:hover {
@@ -145,6 +167,7 @@
             font-weight: 500;
             height: 30px;
             white-space: nowrap;
+            z-index: 2;
         }
         
         .search-clear-btn:hover {
@@ -153,52 +176,55 @@
             border-color: #dc3545;
         }
         
-        /* Центральная секция - заголовок и кнопка */
+        /* Центральная секция */
         .center-section {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
-            min-width: 300px;
-            justify-content: flex-end; /* Выровнять по низу */
-            padding-bottom: 5px; /* Добавлено для выравнивания */
+            gap: 8px;
+            min-width: 200px;
+            justify-content: flex-end;
+            padding-bottom: 5px;
+            text-align: center;
         }
         
+        /* Увеличиваем заголовок на 30% */
         h1 {
             color: #2c3e50;
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 32px;
+            gap: 10px;
+            font-size: 36.4px;
             font-weight: 700;
-            white-space: nowrap; /* Запретить перенос заголовка */
+            white-space: nowrap;
         }
         
         .icon-title {
-            font-size: 36px;
+            font-size: 41.6px;
             line-height: 1;
         }
         
-        /* Кнопка добавления */
+        /* Увеличиваем кнопку добавления в 1.5 раза и меняем текст */
         .button-add {
             display: inline-flex;
             align-items: center;
             background-color: var(--primary-color);
             color: white;
-            padding: 10px 20px 10px 12px;
+            padding: 12px 22.5px;
             text-decoration: none;
             border-radius: 8px;
             border: none;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 500;
             transition: all 0.2s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            width: fit-content;
-            height: 40px; /* Высота как у полей ввода */
-            font-family: inherit;
-            white-space: nowrap; /* Запретить перенос текста */
+            height: 60px;
+            white-space: nowrap;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .button-add:hover {
@@ -208,35 +234,39 @@
         }
         
         .big-plus {
-            font-size: 28px !important;
+            font-size: 36px;
             font-weight: bold;
-            margin-right: 10px;
+            margin-right: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100%;
-            transform: translateY(-2px);
         }
         
-        /* Правая секция - авторизация/регистрация */
+        /* Правая секция - авторизация */
+        .auth-section {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            min-width: 0;
+        }
+        
         .auth-panel {
             background: var(--light-blue);
-            padding: 12px 15px; /* Увеличено для единообразия */
+            padding: 12px 15px;
             border-radius: 8px;
-            min-width: 350px;
+            width: 100%;
+            max-width: 100%;
             display: flex;
             align-items: center;
             box-sizing: border-box;
-            height: auto; /* Автоматическая высота для выравнивания */
         }
         
-        /* Стили для авторизованного пользователя */
+        /* Авторизованный пользователь */
         .auth-logged-in {
             display: flex;
             align-items: center;
             gap: 15px;
             width: 100%;
-            height: 100%;
         }
         
         .auth-user-info {
@@ -246,9 +276,11 @@
         }
         
         .auth-user-info .username {
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 4px;
             font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .auth-user-info .welcome {
@@ -257,22 +289,22 @@
             opacity: 0.9;
         }
         
-        /* Стили для неавторизованного пользователя */
+        /* Неавторизованный пользователь */
         .auth-login-form {
             display: flex;
             width: 100%;
-            height: 100%;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
         
         .auth-login-fields {
             display: flex;
             flex-direction: column;
             flex: 1;
-            padding-right: 15px;
+            padding-right: 12px;
             border-right: 1px solid rgba(255, 255, 255, 0.3);
-            gap: 12px; /* Увеличено */
+            gap: 10px;
+            min-width: 0;
         }
         
         .auth-login-input {
@@ -281,35 +313,37 @@
             border-radius: 5px;
             font-size: 14px;
             box-sizing: border-box;
-            height: 40px; /* Увеличено для единообразия */
+            height: 40px;
             background-color: rgba(255, 255, 255, 0.9);
             width: 100%;
+            min-width: 0;
         }
         
         .auth-buttons-column {
             display: flex;
             flex-direction: column;
-            margin-left: 15px;
-            min-width: 110px;
-            gap: 12px; /* Увеличено */
+            margin-left: 12px;
+            min-width: 100px;
+            gap: 10px;
             justify-content: center;
-            flex: 0 0 auto;
+            flex-shrink: 0;
         }
         
         /* Общие стили для кнопок авторизации */
         .auth-button {
-            border-radius: 8px !important;
+            border-radius: 8px;
             padding: 8px 12px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            height: 40px; /* Увеличено для единообразия */
+            height: 40px;
             white-space: nowrap;
             transition: all 0.2s;
             width: 100%;
             text-align: center;
             border: 2px solid;
             box-sizing: border-box;
+            font-family: inherit;
         }
         
         .auth-login-button {
@@ -322,7 +356,6 @@
             background-color: #28a745;
             color: white;
             border-color: #28a745;
-            transform: translateY(-1px);
         }
         
         .auth-register-button {
@@ -334,7 +367,6 @@
         .auth-register-button:hover {
             background-color: #218838;
             border-color: #218838;
-            transform: translateY(-1px);
         }
         
         /* Кнопка выхода */
@@ -342,27 +374,27 @@
             background-color: white;
             color: var(--primary-color);
             border: 2px solid var(--primary-color);
-            border-radius: 8px !important;
+            border-radius: 8px;
             padding: 8px 16px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            height: 40px; /* Увеличено для единообразия */
+            height: 40px;
             white-space: nowrap;
             transition: all 0.2s;
-            min-width: 100px;
+            min-width: 90px;
             text-decoration: none;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
         
         .logout-button:hover {
             background-color: #28a745;
             color: white;
             border-color: #28a745;
-            transform: translateY(-1px);
         }
         
         /* Таблица */
@@ -394,7 +426,9 @@
             font-weight: 600;
             font-size: 13px;
             padding: 10px 10px;
-            white-space: nowrap; /* Запретить перенос заголовков */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         tr:nth-child(even) {
@@ -405,66 +439,82 @@
             background-color: #e9ecef;
         }
         
-        /* Ширина столбцов */
-        td:nth-child(1), th:nth-child(1) { width: 22%; }
-        td:nth-child(2), th:nth-child(2) { width: 12%; }
-        td:nth-child(3), th:nth-child(3) { width: 10%; }
+        /* Ширина столбцов - ОСНОВНОЙ СТИЛЬ ДЛЯ ДЕСКТОПА */
+        td:nth-child(1), th:nth-child(1) { width: 18%; }
+        td:nth-child(2), th:nth-child(2) { width: 11%; }
+        td:nth-child(3), th:nth-child(3) { width: 12%; } /* Уменьшил с 14% до 12% */
         td:nth-child(4), th:nth-child(4) { width: 12%; }
         td:nth-child(5), th:nth-child(5) { width: 12%; }
         td:nth-child(6), th:nth-child(6) { width: 12%; }
         td:nth-child(7), th:nth-child(7) { width: 12%; }
-        td:nth-child(8), th:nth-child(8) { width: 8%; min-width: 120px; }
+        td:nth-child(8), th:nth-child(8) { 
+            width: 11%; /* Увеличил с 3% до 11% */
+            min-width: 130px; /* Увеличил чтобы помещались все кнопки */
+        }
+        
+        /* Для заголовков разрешаем перенос строк */
+        th:nth-child(2), th:nth-child(3) {
+            white-space: normal;
+            line-height: 1.2;
+        }
         
         .org-name {
             font-weight: 600;
             font-size: 14px;
             margin-bottom: 3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
         .org-inn {
             font-size: 12px;
             color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
         /* Списки в ячейках */
         .field-list {
-            list-style: none !important;
+            list-style: none;
             padding: 0;
             margin: 0;
-            max-height: 100px;
+            max-height: 80px;
             overflow-y: auto;
         }
         
         .field-list li {
             padding: 2px 0;
             font-size: 12px;
-            list-style-type: none !important;
+            list-style-type: none;
             line-height: 1.4;
+            word-break: break-all;
         }
         
-        /* Кнопки действий - ИСПРАВЛЕНО ДЛЯ МАЛЕНЬКИХ ЭКРАНОВ */
+        /* Кнопки действий - ФИКСИРОВАННЫЙ РАЗМЕР */
         .actions-cell {
             text-align: center;
-            padding: 8px 5px !important; /* Уменьшены отступы */
+            padding: 8px 5px;
             vertical-align: middle;
-            min-width: 110px; /* Минимальная ширина */
+            min-width: 130px; /* Минимум чтобы поместились все 3 кнопки */
         }
         
         .action-buttons {
             display: flex;
             flex-direction: row;
-            gap: 4px; /* Уменьшено */
+            gap: 4px;
             align-items: center;
             justify-content: center;
-            flex-wrap: nowrap; /* Запретить перенос */
-            min-width: 100px; /* Минимальная ширина */
+            flex-wrap: nowrap;
+            min-width: 120px;
         }
         
         .button-action {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px; /* Немного уменьшено */
+            width: 32px;
             height: 32px;
             background-color: white;
             color: var(--action-color);
@@ -475,7 +525,11 @@
             transition: all 0.2s;
             text-decoration: none;
             box-sizing: border-box;
-            flex-shrink: 0; /* Запретить сжатие */
+            flex-shrink: 0;
+            min-width: 32px;
+            max-width: 32px;
+            min-height: 32px;
+            max-height: 32px;
         }
         
         .button-action:hover {
@@ -542,7 +596,7 @@
             color: var(--primary-hover);
         }
         
-        /* Таблица для мобильных */
+        /* Мобильная версия */
         .mobile-table {
             display: none;
         }
@@ -553,7 +607,6 @@
             padding: 12px;
             margin-bottom: 12px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            margin-top: 10px;
         }
         
         .mobile-row {
@@ -561,6 +614,7 @@
             padding: 8px 0;
             border-bottom: 1px solid #eee;
             align-items: flex-start;
+            flex-wrap: wrap;
         }
         
         .mobile-row:last-child {
@@ -574,6 +628,7 @@
             flex-shrink: 0;
             font-size: 14px;
             line-height: 1.4;
+            margin-bottom: 4px;
         }
         
         .mobile-value {
@@ -583,6 +638,23 @@
             hyphens: auto;
             font-size: 14px;
             line-height: 1.4;
+            min-width: 0;
+        }
+        
+        /* Особый стиль для строки с действиями в мобильной версии */
+        .mobile-row.actions-row {
+            align-items: center;
+            flex-direction: row;
+        }
+        
+        .mobile-row.actions-row .mobile-label {
+            margin-bottom: 0;
+            min-width: 100px;
+        }
+        
+        .mobile-row.actions-row .mobile-value {
+            display: flex;
+            justify-content: flex-end;
         }
         
         .mobile-contacts {
@@ -596,7 +668,7 @@
         .mobile-contacts li {
             word-wrap: break-word;
             overflow-wrap: break-word;
-            list-style-type: none !important;
+            list-style-type: none;
             font-size: 13px;
             line-height: 1.4;
         }
@@ -613,14 +685,17 @@
             z-index: 2000;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
         
         .modal-content {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 10px;
-            width: 90%;
+            width: 100%;
             max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
         
@@ -649,6 +724,7 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
+            box-sizing: border-box;
         }
         
         .form-control:focus {
@@ -669,210 +745,242 @@
             display: none;
         }
         
-        /* Адаптация */
-        @media (max-width: 1400px) {
+        /* Адаптация для проблемного диапазона 1020-1280px */
+        @media (max-width: 1280px) and (min-width: 1020px) {
+            /* Увеличиваем ширину столбца действий для этого диапазона */
+            td:nth-child(1), th:nth-child(1) { width: 17%; }
+            td:nth-child(2), th:nth-child(2) { width: 10%; }
+            td:nth-child(3), th:nth-child(3) { width: 11%; } /* Уменьшил с 14% до 11% */
+            td:nth-child(4), th:nth-child(4) { width: 11%; }
+            td:nth-child(5), th:nth-child(5) { width: 11%; }
+            td:nth-child(6), th:nth-child(6) { width: 11%; }
+            td:nth-child(7), th:nth-child(7) { width: 11%; }
+            td:nth-child(8), th:nth-child(8) { 
+                width: 18%; /* Увеличил с 6% до 18% */
+                min-width: 140px; /* Увеличил чтобы все кнопки были видны */
+            }
+            
+            /* Уменьшаем отступы */
+            th, td {
+                padding: 6px 8px;
+            }
+            
+            /* Уменьшаем шрифт */
+            table {
+                font-size: 12px;
+            }
+            
+            th {
+                font-size: 12px;
+                white-space: normal;
+                line-height: 1.2;
+            }
+            
+            .org-name {
+                font-size: 13px;
+            }
+            
+            .org-inn {
+                font-size: 11px;
+            }
+            
+            .field-list li {
+                font-size: 11px;
+            }
+            
+            /* Уменьшаем верхнюю панель */
+            .search-panel, .auth-panel {
+                padding: 10px 12px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .icon-title {
+                font-size: 32px;
+            }
+            
+            .button-add {
+                height: 50px;
+                font-size: 16px;
+                padding: 10px 18px;
+            }
+            
+            .big-plus {
+                font-size: 28px;
+                margin-right: 8px;
+            }
+        }
+        
+        /* Адаптация для мобильных и планшетов - авторизация наверху */
+        @media (max-width: 1300px) {
             .top-panel {
                 grid-template-columns: 1fr;
                 grid-template-rows: auto auto auto;
-                gap: 15px;
-                align-items: stretch;
+                gap: 12px;
             }
             
-            .auth-panel {
+            /* Изменяем порядок: авторизация сверху */
+            .auth-section {
                 grid-row: 1;
-                justify-self: center;
-                min-width: auto;
-                width: 100%;
-                max-width: 600px;
-                height: auto;
+                order: 1;
+                justify-content: center;
             }
             
             .center-section {
                 grid-row: 2;
-                min-width: auto;
-                align-items: center;
-                padding-top: 0;
-                padding-bottom: 0;
+                order: 2;
             }
             
             .search-section {
                 grid-row: 3;
-                min-width: auto;
+                order: 3;
                 width: 100%;
+                justify-content: center;
+            }
+            
+            .auth-panel {
+                width: 100%;
+                max-width: 600px;
+                min-width: 0;
             }
             
             .search-panel {
-                min-width: auto;
                 width: 100%;
                 max-width: 600px;
-                margin: 0 auto;
+                margin: 0;
+                min-width: 0;
             }
             
             .search-label {
-                min-width: 80px;
+                min-width: 60px;
+                font-size: 13px;
             }
             
-            .search-select {
-                padding: 8px 40px 8px 10px;
+            /* Мобильная версия - уменьшаем увеличенные элементы */
+            h1 {
+                font-size: 31.2px;
             }
             
-            .auth-login-form {
-                flex-direction: column;
-                align-items: stretch;
+            .icon-title {
+                font-size: 36.4px;
             }
             
-            .auth-login-fields {
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-                padding-right: 0;
-                padding-bottom: 10px;
-                margin-bottom: 10px;
-                gap: 10px;
+            .button-add {
+                height: 54px;
+                font-size: 18px;
+                padding: 9px 18px;
             }
             
-            .auth-buttons-column {
-                margin-left: 0;
-                flex-direction: row;
-                justify-content: center;
-                gap: 15px;
+            .big-plus {
+                font-size: 30px;
+                margin-right: 9px;
             }
         }
         
-        @media (max-width: 1100px) {
-            .top-panel {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto auto;
-                gap: 15px;
+        @media (max-width: 1024px) and (min-width: 993px) {
+            th, td {
+                padding: 5px 6px;
             }
             
-            .auth-panel {
-                grid-row: 1;
-                justify-self: center;
-                min-width: auto;
-                width: 100%;
-                max-width: 500px;
-                height: auto;
+            table {
+                font-size: 11px;
             }
             
-            .center-section {
-                grid-row: 2;
-                min-width: auto;
-                align-items: center;
+            th {
+                white-space: normal;
+                line-height: 1.2;
+                font-size: 11px;
             }
             
-            .search-section {
-                grid-row: 3;
-                min-width: auto;
-                width: 100%;
+            .org-name {
+                font-size: 12px;
             }
             
-            .search-panel {
-                min-width: auto;
-                width: 100%;
-                max-width: 500px;
-                margin: 0 auto;
-            }
-        }
-        
-        /* Исправление для маленьких экранов */
-        @media (max-width: 900px) {
-            .mobile-value {
-                display: block !important;
-            }
-            
-            .mobile-contacts {
-                display: block !important;
-            }
-            
-            .mobile-contacts li {
-                margin-bottom: 2px;
+            .org-inn {
+                font-size: 10px;
             }
             
             .field-list li {
-                line-height: 1.4;
-                margin-bottom: 2px;
+                font-size: 10px;
             }
             
-            /* Исправление для иконок на маленьких экранах */
-            .actions-cell {
-                min-width: 100px !important;
-                padding: 6px 4px !important;
-            }
-            
-            .action-buttons {
-                gap: 3px !important;
-                min-width: 90px !important;
+            td:nth-child(1), th:nth-child(1) { width: 22%; }
+            td:nth-child(2), th:nth-child(2) { width: 10%; }
+            td:nth-child(3), th:nth-child(3) { width: 11%; } /* Уменьшил с 13% до 11% */
+            td:nth-child(4), th:nth-child(4) { width: 12%; }
+            td:nth-child(5), th:nth-child(5) { width: 10%; }
+            td:nth-child(6), th:nth-child(6) { width: 10%; }
+            td:nth-child(7), th:nth-child(7) { width: 10%; }
+            td:nth-child(8), th:nth-child(8) { 
+                width: 15%; /* Увеличил с 9% до 15% */
+                min-width: 135px; /* Увеличил чтобы все кнопки были видны */
             }
             
             .button-action {
-                width: 28px !important;
-                height: 28px !important;
-                font-size: 12px !important;
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
             }
             
-            th:nth-child(8) {
-                min-width: 100px !important;
-                font-size: 12px !important;
-                padding: 8px 5px !important;
-            }
-        }
-        
-        /* Исправление для переноса на маленьких экранах */
-        @media (max-width: 820px) {
-            .mobile-value {
-                word-break: break-word !important;
-                overflow-wrap: break-word !important;
-                hyphens: auto !important;
+            .action-buttons {
+                gap: 3px;
             }
             
-            .field-list li {
-                word-break: break-word !important;
-                overflow-wrap: break-word !important;
+            .search-panel, .auth-panel {
+                padding: 8px 10px;
             }
             
-            .mobile-contacts li {
-                word-break: break-word !important;
-                overflow-wrap: break-word !important;
+            .search-row {
+                gap: 8px;
             }
             
-            td, .mobile-value {
-                max-width: 100% !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
+            h1 {
+                font-size: 24px;
             }
             
-            /* Предотвращение переноса заголовка "Редактировать" */
-            th:nth-child(8) {
-                white-space: nowrap !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
+            .icon-title {
+                font-size: 28px;
+            }
+            
+            .button-add {
+                height: 45px;
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            
+            .big-plus {
+                font-size: 24px;
+                margin-right: 6px;
             }
         }
         
         @media (max-width: 992px) {
-            table {
-                display: none;
+            .container {
+                padding: 0;
             }
             
-            .mobile-table {
-                display: block;
+            body {
+                padding: 8px;
             }
             
-            .empty {
-                display: block;
+            h1 {
+                font-size: 28.6px;
             }
             
-            .top-panel {
-                align-items: center;
+            .icon-title {
+                font-size: 33.8px;
             }
             
-            .search-panel, .auth-panel {
-                width: 100%;
+            .auth-panel {
                 max-width: 100%;
+                padding: 10px;
             }
             
-            .search-select {
-                padding: 8px 40px 8px 10px;
+            .search-panel {
+                max-width: 100%;
+                padding: 10px;
             }
             
             .auth-login-fields {
@@ -885,19 +993,69 @@
             
             .auth-panel .auth-buttons-compact {
                 display: flex;
-                gap: 15px;
+                gap: 10px;
                 width: 100%;
                 justify-content: center;
+            }
+            
+            .auth-buttons-compact .auth-button {
+                flex: 1;
+                max-width: 140px;
+            }
+            
+            table {
+                display: none;
+            }
+            
+            .mobile-table {
+                display: block;
+            }
+            
+            /* Кнопки на одном уровне с "Действия:" */
+            .mobile-row.actions-row {
+                flex-direction: row;
+                align-items: center;
+            }
+            
+            .mobile-row.actions-row .mobile-label {
+                min-width: 100px;
+                margin-bottom: 0;
+            }
+            
+            .mobile-row.actions-row .mobile-value {
+                display: flex;
+                justify-content: flex-end;
+            }
+            
+            .button-action {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
             }
         }
         
         @media (max-width: 768px) {
-            body {
-                padding: 8px 10px;
+            .top-panel {
+                gap: 10px;
             }
             
-            .top-panel {
-                gap: 12px;
+            h1 {
+                font-size: 26px;
+            }
+            
+            .icon-title {
+                font-size: 31.2px;
+            }
+            
+            .button-add {
+                height: 54px;
+                font-size: 16px;
+                padding: 9px 18px;
+            }
+            
+            .big-plus {
+                font-size: 30px;
+                margin-right: 9px;
             }
             
             .search-row {
@@ -908,467 +1066,440 @@
             
             .search-label {
                 text-align: left;
-                margin-bottom: 0;
-                min-width: auto;
                 width: 100%;
-                font-size: 13px;
+                margin-bottom: 0;
             }
             
             .search-input, .search-select {
                 width: 100%;
-                min-width: 0;
             }
             
             .search-select {
-                padding: 8px 40px 8px 10px;
+                padding: 8px 35px 8px 10px;
             }
             
-            .big-plus {
-                font-size: 22px !important;
-                margin-right: 8px;
+            .auth-buttons-compact .auth-button {
+                font-size: 12px;
+                padding: 6px 8px;
             }
             
-            .button-add {
-                font-size: 16px;
-                padding: 6px 12px;
-                height: 36px;
-            }
-            
-            h1 {
-                font-size: 26px;
+            .mobile-row:not(.actions-row) {
                 flex-direction: column;
                 gap: 4px;
-                text-align: center;
             }
             
-            .icon-title {
-                font-size: 30px;
-            }
-            
-            /* Мобильные карточки */
-            .mobile-row {
-                flex-direction: column;
-                gap: 4px;
-                padding: 8px 0;
-            }
-            
-            .mobile-label {
+            .mobile-label:not(.actions-row .mobile-label) {
                 min-width: auto;
-                font-size: 14px;
-            }
-            
-            .mobile-value {
-                text-align: left;
-                font-size: 14px;
-            }
-            
-            .mobile-contacts li {
-                font-size: 13px;
-                padding: 1px 0;
-            }
-            
-            .search-panel, .auth-panel {
-                padding: 10px;
                 width: 100%;
+            }
+            
+            .mobile-value:not(.actions-row .mobile-value) {
+                width: 100%;
+            }
+            
+            .mobile-card {
+                padding: 10px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .button-action {
+                width: 34px;
+                height: 34px;
+                font-size: 15px;
             }
         }
         
         @media (max-width: 480px) {
             h1 {
-                font-size: 22px;
-            }
-            
-            .icon-title {
                 font-size: 26px;
             }
             
+            .icon-title {
+                font-size: 31.2px;
+            }
+            
             .button-add {
+                height: 54px;
                 font-size: 14px;
-                padding: 5px 10px;
-                height: 34px;
+                padding: 7.5px 15px;
             }
             
             .big-plus {
-                font-size: 20px !important;
-                margin-right: 6px;
+                font-size: 27px;
+                margin-right: 9px;
             }
             
-            .search-panel, .auth-panel {
+            .auth-panel {
                 padding: 8px;
-                width: 100%;
             }
             
-            .search-input, .search-select, .auth-login-input {
-                font-size: 13px;
-                padding: 6px 10px;
-                height: 36px;
+            .search-panel {
+                padding: 8px;
             }
             
-            .search-select {
-                padding: 6px 40px 6px 10px;
+            .auth-buttons-compact {
+                gap: 8px;
             }
             
-            .logout-button, .auth-login-button {
-                height: 36px;
+            .auth-buttons-compact .auth-button {
+                font-size: 11px;
+                padding: 5px 6px;
+            }
+            
+            .logout-button {
                 font-size: 13px;
                 padding: 6px 12px;
+                height: 36px;
             }
             
-            .auth-user-info .username {
-                font-size: 16px;
-            }
-            
-            .auth-user-info .welcome {
-                font-size: 13px;
-            }
-            
-            /* Еще меньше иконки на очень маленьких экранах */
-            .actions-cell {
-                min-width: 90px !important;
-                padding: 4px 3px !important;
-            }
-            
-            .action-buttons {
-                gap: 2px !important;
-                min-width: 85px !important;
+            .mobile-card {
+                padding: 8px;
             }
             
             .button-action {
-                width: 26px !important;
-                height: 26px !important;
-                font-size: 11px !important;
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Верхняя панель -->
-    <div class="top-panel">
-        <!-- Левая часть - поиск -->
-        <div class="search-section">
-            <div class="search-panel">
-                <div class="search-row">
-                    <span class="search-label">Искать по:</span>
-                    <select id="search_field" name="field" class="search-select">
-                        <option value="all" {% if search_field == 'all' %}selected{% endif %}>Всем параметрам</option>
-                        <option value="org_name" {% if search_field == 'org_name' %}selected{% endif %}>Наименование</option>
-                        <option value="inn" {% if search_field == 'inn' %}selected{% endif %}>ИНН</option>
-                        <option value="contact_person" {% if search_field == 'contact_person' %}selected{% endif %}>Контактное лицо</option>
-                        <option value="address" {% if search_field == 'address' %}selected{% endif %}>Адрес</option>
-                        <option value="position" {% if search_field == 'position' %}selected{% endif %}>Должность</option>
-                        <option value="phones" {% if search_field == 'phones' %}selected{% endif %}>Телефоны</option>
-                        <option value="emails" {% if search_field == 'emails' %}selected{% endif %}>Email</option>
-                        <option value="websites" {% if search_field == 'websites' %}selected{% endif %}>Сайты</option>
-                    </select>
-                </div>
-                
-                <div class="search-row">
-                    <span class="search-label">Поиск:</span>
-                    <div class="search-input-wrapper">
-                        <input type="text" 
-                               id="search_query" 
-                               name="q" 
-                               class="search-input" 
-                               placeholder="Введите текст..."
-                               value="{{ search_query }}">
-                        <!-- Кнопка поиска -->
-                        <button type="button" class="search-btn" onclick="performSearch()" title="Поиск">
-                            Поиск
-                        </button>
-                        <!-- Кнопка очистки -->
-                        {% if user and search_query %}
-                        <button type="button" class="search-clear-btn" onclick="clearSearch()" title="Очистить поиск">
-                            Очистить
-                        </button>
-                        {% endif %}
+    <div class="container">
+        <!-- Верхняя панель -->
+        <div class="top-panel">
+            <!-- Левая часть - поиск -->
+            <div class="search-section">
+                <div class="search-panel">
+                    <div class="search-row">
+                        <span class="search-label">Искать по:</span>
+                        <select id="search_field" name="field" class="search-select">
+                            <option value="all" {% if search_field == 'all' %}selected{% endif %}>Всем параметрам</option>
+                            <option value="org_name" {% if search_field == 'org_name' %}selected{% endif %}>Наименование</option>
+                            <option value="inn" {% if search_field == 'inn' %}selected{% endif %}>ИНН</option>
+                            <option value="contact_person" {% if search_field == 'contact_person' %}selected{% endif %}>Контактное лицо</option>
+                            <option value="address" {% if search_field == 'address' %}selected{% endif %}>Адрес</option>
+                            <option value="position" {% if search_field == 'position' %}selected{% endif %}>Должность</option>
+                            <option value="phones" {% if search_field == 'phones' %}selected{% endif %}>Телефоны</option>
+                            <option value="emails" {% if search_field == 'emails' %}selected{% endif %}>Email</option>
+                            <option value="websites" {% if search_field == 'websites' %}selected{% endif %}>Сайты</option>
+                        </select>
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Центральная часть - заголовок и кнопка -->
-        <div class="center-section">
-            <h1><span class="icon-title">👔</span> Контрагенты</h1>
-            {% if user %}
-                <a href="{{ url_for('add_contragent') }}" class="button-add">
-                    <span class="big-plus">+</span> Добавить нового контрагента
-                </a>
-            {% else %}
-                <a href="#" onclick="showLoginModal(); return false;" class="button-add">
-                    <span class="big-plus">+</span> Добавить нового контрагента
-                </a>
-            {% endif %}
-        </div>
-        
-        <!-- Правая часть - авторизация/регистрация -->
-        <div class="auth-panel">
-            {% if user %}
-                <!-- Если пользователь авторизован -->
-                <div class="auth-logged-in">
-                    <div class="auth-user-info">
-                        <div class="username">{{ user.username }}</div>
-                        <div class="welcome">Добро пожаловать!</div>
-                    </div>
-                    <a href="{{ url_for('logout') }}" class="logout-button">
-                        Выйти
-                    </a>
-                </div>
-            {% else %}
-                <!-- Если пользователь не авторизован -->
-                <div class="auth-login-form">
-                    <div class="auth-login-fields">
-                        <input type="text" 
-                               id="topLoginUsername" 
-                               class="auth-login-input" 
-                               placeholder="Логин">
-                        <input type="password" 
-                               id="topLoginPassword" 
-                               class="auth-login-input" 
-                               placeholder="Пароль">
-                    </div>
-                    <div class="auth-buttons-column">
-                        <button onclick="showRegisterModal()" class="auth-button auth-register-button">
-                            Регистрация
-                        </button>
-                        <button onclick="loginFromTopPanel()" class="auth-button auth-login-button">
-                            Войти
-                        </button>
-                    </div>
-                    <div class="auth-buttons-compact" style="display: none;">
-                        <button onclick="showRegisterModal()" class="auth-button auth-register-button">
-                            Регистрация
-                        </button>
-                        <button onclick="showLoginModal()" class="auth-button auth-login-button">Войти</button>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-    
-    <!-- Всплывающие сообщения -->
-    <div id="message-container"></div>
-    
-    <!-- Модальное окно входа -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <h3 class="modal-title">Вход в систему</h3>
-            <div id="loginMessage" class="modal-alert" style="display: none;"></div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="loginUsername">Имя пользователя:</label>
-                    <input type="text" id="loginUsername" name="username" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Пароль:</label>
-                    <input type="password" id="loginPassword" name="password" class="form-control" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="auth-button auth-login-button" style="width: 100%;">Войти</button>
-                    <button type="button" onclick="hideLoginModal()" class="auth-button auth-login-button" style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
-                        Отмена
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Модальное окно регистрации -->
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <h3 class="modal-title">Регистрация</h3>
-            <div id="registerMessage" class="modal-alert" style="display: none;"></div>
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="registerUsername">Имя пользователя:</label>
-                    <input type="text" id="registerUsername" name="username" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerEmail">Email (необязательно):</label>
-                    <input type="email" id="registerEmail" name="email" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Пароль:</label>
-                    <input type="password" id="registerPassword" name="password" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerConfirmPassword">Подтвердите пароль:</label>
-                    <input type="password" id="registerConfirmPassword" name="confirm_password" class="form-control" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="auth-button auth-register-button" style="width: 100%;">
-                        Зарегистрироваться
-                    </button>
-                    <button type="button" onclick="hideRegisterModal()" class="auth-button auth-login-button" style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
-                        Отмена
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Основной контент -->
-    {% if user %}
-        <!-- Пользователь авторизован -->
-        {% if contragents %}
-            <!-- Есть контрагенты - показываем таблицы -->
-            <!-- Таблица для десктопов -->
-            <table>
-                <thead>
-                    <tr>
-                        <th>Организация, ИНН</th>
-                        <th>Контактное лицо</th>
-                        <th>Должность</th>
-                        <th>Адрес</th>
-                        <th>Телефоны</th>
-                        <th>Email</th>
-                        <th>Сайты</th>
-                        <th>Редактировать</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for contragent in contragents %}
-                    <tr>
-                        <td>
-                            <div class="org-name">{{ contragent.org_name }}</div>
-                            {% if contragent.inn %}
-                            <div class="org-inn">ИНН: {{ contragent.inn }}</div>
+                    
+                    <div class="search-row">
+                        <span class="search-label">Поиск:</span>
+                        <div class="search-input-wrapper">
+                            <input type="text" 
+                                   id="search_query" 
+                                   name="q" 
+                                   class="search-input" 
+                                   placeholder="Введите текст..."
+                                   value="{{ search_query }}">
+                            <!-- Кнопка поиска -->
+                            <button type="button" class="search-btn" onclick="performSearch()" title="Поиск">
+                                Поиск
+                            </button>
+                            <!-- Кнопка очистки -->
+                            {% if user and search_query %}
+                            <button type="button" class="search-clear-btn" onclick="clearSearch()" title="Очистить поиск">
+                                Очистить
+                            </button>
                             {% endif %}
-                        </td>
-                        <td>{{ contragent.contact_person or '' }}</td>
-                        <td>{{ contragent.position or '' }}</td>
-                        <td>{{ contragent.address or '' }}</td>
-                        <td>
-                            <ul class="field-list">
-                                {% for phone in contragent.phones[:3] %}
-                                    <li>{{ phone.number }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                        <td>
-                            <ul class="field-list">
-                                {% for email in contragent.emails[:3] %}
-                                    <li>{{ email.address }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                        <td>
-                            <ul class="field-list">
-                                {% for site in contragent.websites[:3] %}
-                                    <li>{{ site.url }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                        <td class="actions-cell">
-                            <div class="action-buttons">
-                                <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
-                                <a href="{{ url_for('add_contragent') }}?copy_id={{ contragent.id }}" class="button-action button-copy" title="Добавление нового контрагента копированием этого">⧉</a>
-                                <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            
-            <!-- Таблица для мобильных -->
-            <div class="mobile-table">
-                {% for contragent in contragents %}
-                <div class="mobile-card">
-                    <div class="mobile-row">
-                        <div class="mobile-label">Организация:</div>
-                        <div class="mobile-value">{{ contragent.org_name }}</div>
-                    </div>
-                    {% if contragent.inn %}
-                    <div class="mobile-row">
-                        <div class="mobile-label">ИНН:</div>
-                        <div class="mobile-value">{{ contragent.inn }}</div>
-                    </div>
-                    {% endif %}
-                    {% if contragent.contact_person %}
-                    <div class="mobile-row">
-                        <div class="mobile-label">Контактное лицо:</div>
-                        <div class="mobile-value">{{ contragent.contact_person }}</div>
-                    </div>
-                    {% endif %}
-                    {% if contragent.position %}
-                    <div class="mobile-row">
-                        <div class="mobile-label">Должность:</div>
-                        <div class="mobile-value">{{ contragent.position }}</div>
-                    </div>
-                    {% endif %}
-                    {% if contragent.address %}
-                    <div class="mobile-row">
-                        <div class="mobile-label">Адрес:</div>
-                        <div class="mobile-value">{{ contragent.address }}</div>
-                    </div>
-                    {% endif %}
-                    {% if contragent.phones %}
-                    <div class="mobile-row">
-                        <div class="mobile-label">Телефоны:</div>
-                        <div class="mobile-value">
-                            <ul class="mobile-contacts">
-                                {% for phone in contragent.phones[:3] %}
-                                    <li>{{ phone.number }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% if contragent.emails %}
-                    <div class="mobile-row">
-                        <div class="mobile-label">Email:</div>
-                        <div class="mobile-value">
-                            <ul class="mobile-contacts">
-                                {% for email in contragent.emails[:3] %}
-                                    <li>{{ email.address }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% if contragent.websites %}
-                    <div class="mobile-row">
-                        <div class="mobile-label">Сайты:</div>
-                        <div class="mobile-value">
-                            <ul class="mobile-contacts">
-                                {% for site in contragent.websites[:3] %}
-                                    <li>{{ site.url }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endif %}
-                    <div class="mobile-row">
-                        <div class="mobile-label">Действия:</div>
-                        <div class="mobile-value">
-                            <div class="action-buttons" style="justify-content: flex-end;">
-                                <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
-                                <a href="{{ url_for('add_contragent') }}?copy_id={{ contragent.id }}" class="button-action button-copy" title="Добавление нового контрагента копированием этого">⧉</a>
-                                <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
-                            </div>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
+            
+            <!-- Центральная часть - заголовок и кнопка -->
+            <div class="center-section">
+                <h1><span class="icon-title">👔</span> Контрагенты</h1>
+                {% if user %}
+                    <a href="{{ url_for('add_contragent') }}" class="button-add">
+                        <span class="big-plus">+</span> Добавить нового контрагента
+                    </a>
+                {% else %}
+                    <a href="#" onclick="showLoginModal(); return false;" class="button-add">
+                        <span class="big-plus">+</span> Добавить нового контрагента
+                    </a>
+                {% endif %}
+            </div>
+            
+            <!-- Правая часть - авторизация/регистрация -->
+            <div class="auth-section">
+                <div class="auth-panel">
+                    {% if user %}
+                        <!-- Если пользователь авторизован -->
+                        <div class="auth-logged-in">
+                            <div class="auth-user-info">
+                                <div class="username">{{ user.username }}</div>
+                                <div class="welcome">Добро пожаловать!</div>
+                            </div>
+                            <a href="{{ url_for('logout') }}" class="logout-button">
+                                Выйти
+                            </a>
+                        </div>
+                    {% else %}
+                        <!-- Если пользователь не авторизован -->
+                        <div class="auth-login-form">
+                            <div class="auth-login-fields">
+                                <input type="text" 
+                                       id="topLoginUsername" 
+                                       class="auth-login-input" 
+                                       placeholder="Логин">
+                                <input type="password" 
+                                       id="topLoginPassword" 
+                                       class="auth-login-input" 
+                                       placeholder="Пароль">
+                            </div>
+                            <div class="auth-buttons-column">
+                                <button onclick="showRegisterModal()" class="auth-button auth-register-button">
+                                    Регистрация
+                                </button>
+                                <button onclick="loginFromTopPanel()" class="auth-button auth-login-button">
+                                    Войти
+                                </button>
+                            </div>
+                            <div class="auth-buttons-compact" style="display: none;">
+                                <button onclick="showRegisterModal()" class="auth-button auth-register-button">
+                                    Регистрация
+                                </button>
+                                <button onclick="showLoginModal()" class="auth-button auth-login-button">Войти</button>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Всплывающие сообщения -->
+        <div id="message-container"></div>
+        
+        <!-- Модальное окно входа -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <h3 class="modal-title">Вход в систему</h3>
+                <div id="loginMessage" class="modal-alert" style="display: none;"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">Имя пользователя:</label>
+                        <input type="text" id="loginUsername" name="username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Пароль:</label>
+                        <input type="password" id="loginPassword" name="password" class="form-control" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="auth-button auth-login-button" style="width: 100%;">Войти</button>
+                        <button type="button" onclick="hideLoginModal()" class="auth-button auth-login-button" style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
+                            Отмена
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Модальное окно регистрации -->
+        <div id="registerModal" class="modal">
+            <div class="modal-content">
+                <h3 class="modal-title">Регистрация</h3>
+                <div id="registerMessage" class="modal-alert" style="display: none;"></div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerUsername">Имя пользователя:</label>
+                        <input type="text" id="registerUsername" name="username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email (необязательно):</label>
+                        <input type="email" id="registerEmail" name="email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Пароль:</label>
+                        <input type="password" id="registerPassword" name="password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerConfirmPassword">Подтвердите пароль:</label>
+                        <input type="password" id="registerConfirmPassword" name="confirm_password" class="form-control" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="auth-button auth-register-button" style="width: 100%;">
+                            Зарегистрироваться
+                        </button>
+                        <button type="button" onclick="hideRegisterModal()" class="auth-button auth-login-button" style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
+                            Отмена
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Основной контент -->
+        {% if user %}
+            <!-- Пользователь авторизован -->
+            {% if contragents %}
+                <!-- Есть контрагенты - показываем таблицы -->
+                <!-- Таблица для десктопов -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Организация, ИНН</th>
+                            <th>Контактное лицо</th>
+                            <th>Должность</th>
+                            <th>Адрес</th>
+                            <th>Телефоны</th>
+                            <th>Email</th>
+                            <th>Сайты</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contragent in contragents %}
+                        <tr>
+                            <td>
+                                <div class="org-name">{{ contragent.org_name }}</div>
+                                {% if contragent.inn %}
+                                <div class="org-inn">ИНН: {{ contragent.inn }}</div>
+                                {% endif %}
+                            </td>
+                            <td>{{ contragent.contact_person or '' }}</td>
+                            <td>{{ contragent.position or '' }}</td>
+                            <td>{{ contragent.address or '' }}</td>
+                            <td>
+                                <ul class="field-list">
+                                    {% for phone in contragent.phones[:3] %}
+                                        <li>{{ phone.number }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="field-list">
+                                    {% for email in contragent.emails[:3] %}
+                                        <li>{{ email.address }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="field-list">
+                                    {% for site in contragent.websites[:3] %}
+                                        <li>{{ site.url }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td class="actions-cell">
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
+                                    <a href="{{ url_for('add_contragent') }}?copy_id={{ contragent.id }}" class="button-action button-copy" title="Копировать">⧉</a>
+                                    <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <!-- Таблица для мобильных -->
+                <div class="mobile-table">
+                    {% for contragent in contragents %}
+                    <div class="mobile-card">
+                        <div class="mobile-row">
+                            <div class="mobile-label">Организация:</div>
+                            <div class="mobile-value">{{ contragent.org_name }}</div>
+                        </div>
+                        {% if contragent.inn %}
+                        <div class="mobile-row">
+                            <div class="mobile-label">ИНН:</div>
+                            <div class="mobile-value">{{ contragent.inn }}</div>
+                        </div>
+                        {% endif %}
+                        {% if contragent.contact_person %}
+                        <div class="mobile-row">
+                            <div class="mobile-label">Контактное лицо:</div>
+                            <div class="mobile-value">{{ contragent.contact_person }}</div>
+                        </div>
+                        {% endif %}
+                        {% if contragent.position %}
+                        <div class="mobile-row">
+                            <div class="mobile-label">Должность:</div>
+                            <div class="mobile-value">{{ contragent.position }}</div>
+                        </div>
+                        {% endif %}
+                        {% if contragent.address %}
+                        <div class="mobile-row">
+                            <div class="mobile-label">Адрес:</div>
+                            <div class="mobile-value">{{ contragent.address }}</div>
+                        </div>
+                        {% endif %}
+                        {% if contragent.phones %}
+                        <div class="mobile-row">
+                            <div class="mobile-label">Телефоны:</div>
+                            <div class="mobile-value">
+                                <ul class="mobile-contacts">
+                                    {% for phone in contragent.phones[:3] %}
+                                        <li>{{ phone.number }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if contragent.emails %}
+                        <div class="mobile-row">
+                            <div class="mobile-label">Email:</div>
+                            <div class="mobile-value">
+                                <ul class="mobile-contacts">
+                                    {% for email in contragent.emails[:3] %}
+                                        <li>{{ email.address }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if contragent.websites %}
+                        <div class="mobile-row">
+                            <div class="mobile-label">Сайты:</div>
+                            <div class="mobile-value">
+                                <ul class="mobile-contacts">
+                                    {% for site in contragent.websites[:3] %}
+                                        <li>{{ site.url }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="mobile-row actions-row">
+                            <div class="mobile-label">Действия:</div>
+                            <div class="mobile-value">
+                                <div class="action-buttons" style="justify-content: flex-end;">
+                                    <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
+                                    <a href="{{ url_for('add_contragent') }}?copy_id={{ contragent.id }}" class="button-action button-copy" title="Копировать">⧉</a>
+                                    <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- Пользователь авторизован, но контрагентов нет -->
+                <div class="empty">
+                    <h3>Контрагентов не найдено</h3>
+                    <p>Измените параметры поиска или добавьте контрагента</p>
+                </div>
+            {% endif %}
         {% else %}
-            <!-- Пользователь авторизован, но контрагентов нет -->
+            <!-- Пользователь не авторизован -->
             <div class="empty">
-                <h3>Контрагентов не найдено</h3>
-                <p>Измените параметры поиска или добавьте контрагента</p>
+                <h3>Добро пожаловать в систему "Контрагенты"!</h3>
+                <p>Для работы с контрагентами необходимо 
+                    <span onclick="showLoginModal()" class="clickable-link">войти</span> 
+                    или 
+                    <span onclick="showRegisterModal()" class="clickable-link">зарегистрироваться</span>
+                </p>
             </div>
         {% endif %}
-    {% else %}
-        <!-- Пользователь не авторизован -->
-        <div class="empty">
-            <h3>Добро пожаловать в систему "Контрагенты"!</h3>
-            <p>Для работы с контрагентами необходимо 
-                <span onclick="showLoginModal()" class="clickable-link">войти</span> 
-                или 
-                <span onclick="showRegisterModal()" class="clickable-link">зарегистрироваться</span>
-            </p>
-        </div>
-    {% endif %}
+    </div>
     
     <script>
         // Функция показа сообщения
@@ -1435,6 +1566,8 @@
                     searchBtn.style.display = 'block';
                 }
             }
+            
+            checkScreenSize();
         });
         
         // Поиск при нажатии Enter
@@ -1470,7 +1603,7 @@
                         showMessage(data.message, 'danger');
                     }
                 })
-                .catch(error => showMessage('Ошибка при удаления', 'danger'));
+                .catch(error => showMessage('Ошибка при удалении', 'danger'));
             }
         }
         
@@ -1638,7 +1771,6 @@
         }
         
         window.addEventListener('resize', checkScreenSize);
-        window.addEventListener('load', checkScreenSize);
         
         // Flash сообщения
         {% with messages = get_flashed_messages(with_categories=true) %}

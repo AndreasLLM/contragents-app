@@ -1,63 +1,72 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from sqlalchemy import or_, func, text
 from dotenv import load_dotenv
-# ИМЕННО ДЛЯ PSYCOPG3 НУЖЕН NullPool:
 from sqlalchemy.pool import NullPool
+from urllib.parse import urlparse
 
 load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-ключ')
 
-# --- НАСТРОЙКА БАЗЫ ДАННЫХ ---
+# 🔧 ИСПРАВЛЕННАЯ НАСТРОЙКА СЕССИИ
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # Сессия на 7 дней
+app.config['SESSION_REFRESH_EACH_REQUEST'] = True
+
+# --- НАСТРОЙКА БАЗЫ ДАННЫХ (ТОЛЬКО POSTGRESQL) ---
 database_url = os.environ.get('DATABASE_URL')
 
-if database_url:
-    # КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Обрабатываем оба формата Render
-    if database_url.startswith('postgres://'):
-        database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
-    elif database_url.startswith('postgresql://'):
-        # Render теперь может использовать postgresql://, нужно менять на psycopg
-        database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
-    
-    # Отладочный вывод полного URL (без пароля для безопасности)
-    safe_url = database_url
-    if '@' in database_url:
-        # Скрываем пароль в логах
-        parts = database_url.split('@')
-        user_pass = parts[0].split(':')
-        if len(user_pass) > 2:
-            user_pass[2] = '***'  # Пароль
-        safe_url = ':'.join(user_pass) + '@' + '@'.join(parts[1:])
-    
-    print(f"✅ Используется PostgreSQL с диалектом psycopg3")
-    print(f"✅ Преобразованный URL: {safe_url[:100]}...")
-    
-    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-        'pool_recycle': 300,
-        'pool_pre_ping': True,
-        'poolclass': NullPool,
-        'connect_args': {
-            "sslmode": "require"
-        }
-    }
-else:
-    # Локальная разработка
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
-    print("Используется SQLite (локальная разработка)")
+if not database_url:
+    print("❌ ОШИБКА: DATABASE_URL не установлен!")
+    print("✅ Настройте DATABASE_URL в Render Dashboard")
+    print("✅ Или добавьте в .env файл для локальной разработки")
+    exit(1)
 
+# Преобразование URL для psycopg3
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
+elif database_url.startswith('postgresql://'):
+    database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
+
+# Логирование (без пароля)
+safe_url = database_url
+if '@' in database_url:
+    parts = database_url.split('@')
+    user_pass = parts[0].split(':')
+    if len(user_pass) > 2:
+        user_pass[2] = '***'
+    safe_url = ':'.join(user_pass) + '@' + '@'.join(parts[1:])
+
+print(f"✅ Используется PostgreSQL с диалектом psycopg3")
+print(f"✅ Преобразованный URL: {safe_url[:100]}...")
+
+# Определяем, работаем ли мы на Render (для SSL)
+is_render = 'onrender.com' in database_url or 'RENDER' in os.environ
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+
+# Настройки движка
+engine_options = {
+    'pool_recycle': 300,
+    'pool_pre_ping': True,
+    'poolclass': NullPool,
+}
+
+# SSL только для Render
+if is_render:
+    engine_options['connect_args'] = {"sslmode": "require"}
+    print(f"✅ Настроено SSL подключение (требуется для Render)")
+
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = engine_options
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # --- КОНЕЦ НАСТРОЙКИ БАЗЫ ---
 
 db = SQLAlchemy(app)
-# ... остальной код (модели, роуты) остаётся без изменений ...
 
-# ДОБАВЬТЕ ЭТОТ МАРШРУТ ДЛЯ FAVICON++
+# ДОБАВЬТЕ ЭТОТ МАРШРУТ ДЛЯ FAVICON
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
@@ -110,7 +119,7 @@ class Contragent(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # ВАЖНО: привязка к пользователю
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, default=1)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
     phones = db.relationship('Phone', backref='contragent', lazy=True, cascade="all, delete-orphan")
     emails = db.relationship('Email', backref='contragent', lazy=True, cascade="all, delete-orphan")
@@ -288,6 +297,7 @@ def login():
         
         if user and user.check_password(password):
             session['user_id'] = user.id
+            session.permanent = True  # Делаем сессию постоянной
             flash('Авторизация успешна!', 'success')
             return redirect(url_for('index'))
         else:
@@ -314,6 +324,7 @@ def api_login():
     
     if user and user.check_password(password):
         session['user_id'] = user.id
+        session.permanent = True  # Делаем сессию постоянной
         return jsonify({'success': True, 'message': 'Авторизация успешна'})
     else:
         return jsonify({'success': False, 'message': 'Неверное имя пользователя или пароль'})
@@ -349,27 +360,36 @@ def api_register():
         db.session.rollback()
         return jsonify({'success': False, 'message': 'Произошла ошибка при регистрации'})
 
-# Добавление контрагента
+# Добавление контрагента (ИСПРАВЛЕНО КОПИРОВАНИЕ)
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_contragent():
-    copy_id = request.args.get('copy_id')
+    # 🔧 ИСПРАВЛЕНИЕ: Правильное получение copy_id
+    copy_id_str = request.args.get('copy_id')
     contragent_to_copy = None
     
-    if copy_id:
-        contragent_to_copy = Contragent.query.filter_by(id=copy_id, user_id=session['user_id']).first()
+    if copy_id_str:
+        try:
+            copy_id = int(copy_id_str)  # Преобразуем в int
+            contragent_to_copy = Contragent.query.filter_by(
+                id=copy_id, 
+                user_id=session['user_id']
+            ).first()
+            
+            if not contragent_to_copy:
+                flash('Контрагент для копирования не найден', 'danger')
+                return redirect(url_for('index'))
+        except (ValueError, TypeError):
+            flash('Некорректный ID для копирования', 'danger')
+            return redirect(url_for('index'))
     
     if request.method == 'POST':
         try:
-            org_name = request.form.get('org_name')
-            inn = request.form.get('inn')
-            contact_person = request.form.get('contact_person')
-            position = request.form.get('position')
-            address = request.form.get('address')
-            
-            phones = request.form.getlist('phones[]')
-            emails = request.form.getlist('emails[]')
-            websites = request.form.getlist('websites[]')
+            org_name = request.form.get('org_name', '').strip()
+            inn = request.form.get('inn', '').strip()
+            contact_person = request.form.get('contact_person', '').strip()
+            position = request.form.get('position', '').strip()
+            address = request.form.get('address', '').strip()
             
             if not org_name:
                 flash('Название организации обязательно для заполнения', 'danger')
@@ -385,18 +405,24 @@ def add_contragent():
             )
             
             db.session.add(contragent)
-            db.session.flush()
+            db.session.flush()  # Получаем ID
             
+            # Телефоны
+            phones = request.form.getlist('phones[]')
             for phone in phones:
                 if phone and phone.strip():
                     phone_obj = Phone(contragent_id=contragent.id, number=phone.strip())
                     db.session.add(phone_obj)
             
+            # Emails
+            emails = request.form.getlist('emails[]')
             for email in emails:
                 if email and email.strip():
                     email_obj = Email(contragent_id=contragent.id, address=email.strip())
                     db.session.add(email_obj)
             
+            # Сайты
+            websites = request.form.getlist('websites[]')
             for website in websites:
                 if website and website.strip():
                     website_obj = Website(contragent_id=contragent.id, url=website.strip())
@@ -404,11 +430,7 @@ def add_contragent():
             
             db.session.commit()
             
-            if copy_id:
-                flash('Копия контрагента успешно создана', 'success')
-            else:
-                flash('Контрагент успешно добавлен', 'success')
-                
+            flash('Контрагент успешно добавлен', 'success')
             return redirect(url_for('index'))
             
         except Exception as e:
@@ -416,9 +438,11 @@ def add_contragent():
             flash(f'Ошибка при добавлении контрагента: {str(e)}', 'danger')
             return redirect(url_for('add_contragent'))
     
-    return render_template('add.html', contragent=contragent_to_copy, is_copy=bool(copy_id))
+    return render_template('add.html', 
+                         contragent=contragent_to_copy, 
+                         is_copy=bool(copy_id_str))
 
-# Редактирование контрагента
+# Редактирование контрагента (ИСПРАВЛЕНО СОХРАНЕНИЕ)
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_contragent(id):
@@ -426,30 +450,32 @@ def edit_contragent(id):
     
     if request.method == 'POST':
         try:
-            contragent.org_name = request.form.get('org_name')
-            contragent.inn = request.form.get('inn')
-            contragent.contact_person = request.form.get('contact_person')
-            contragent.position = request.form.get('position')
-            contragent.address = request.form.get('address')
+            # 🔧 ИСПРАВЛЕНИЕ: Сохраняем даже пустые значения
+            contragent.org_name = request.form.get('org_name', '').strip()
+            contragent.inn = request.form.get('inn', '').strip() or None
+            contragent.contact_person = request.form.get('contact_person', '').strip() or None
+            contragent.position = request.form.get('position', '').strip() or None
+            contragent.address = request.form.get('address', '').strip() or None
             
+            # Удаляем старые контакты
             Phone.query.filter_by(contragent_id=contragent.id).delete()
             Email.query.filter_by(contragent_id=contragent.id).delete()
             Website.query.filter_by(contragent_id=contragent.id).delete()
             
+            # Добавляем новые
             phones = request.form.getlist('phones[]')
-            emails = request.form.getlist('emails[]')
-            websites = request.form.getlist('websites[]')
-            
             for phone in phones:
                 if phone and phone.strip():
                     phone_obj = Phone(contragent_id=contragent.id, number=phone.strip())
                     db.session.add(phone_obj)
             
+            emails = request.form.getlist('emails[]')
             for email in emails:
                 if email and email.strip():
                     email_obj = Email(contragent_id=contragent.id, address=email.strip())
                     db.session.add(email_obj)
             
+            websites = request.form.getlist('websites[]')
             for website in websites:
                 if website and website.strip():
                     website_obj = Website(contragent_id=contragent.id, url=website.strip())
@@ -483,7 +509,7 @@ def delete_contragent(id):
         contragent = Contragent.query.filter_by(id=id, user_id=session['user_id']).first()
         
         if not contragent:
-            return jsonify({'success': False, 'message': 'Контрагент не найден или у вас нет прав на его удаление'})
+            return jsonify({'success': False, 'message': 'Контрагент не найден'})
         
         db.session.delete(contragent)
         db.session.commit()
@@ -492,7 +518,7 @@ def delete_contragent(id):
         db.session.rollback()
         return jsonify({'success': False, 'message': f'Ошибка при удалении: {str(e)}'})
 
-# Создание тестового пользователя для разработки и инициализация БД
+# Создание тестового пользователя и инициализация БД
 def init_database():
     with app.app_context():
         try:
@@ -521,4 +547,4 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     app.run(host='0.0.0.0', port=port, debug=debug_mode)
-    print(f"🚀 Приложение запущено на порту {port}, debug={debug_mode}")
+    print(f"🚀 Приложение запущено на порту {port}")
