@@ -19,9 +19,6 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-очень-дл�
 # Умная настройка БД: на Render используем PostgreSQL, локально - SQLite
 database_url = os.environ.get('DATABASE_URL')
 
-# Умная настройка БД: на Render используем PostgreSQL, локально - SQLite
-database_url = os.environ.get('DATABASE_URL')
-
 if database_url:
     # Render предоставляет DATABASE_URL для PostgreSQL, начинается с postgres://
     # Для psycopg3 требуется диалект postgresql+psycopg://
@@ -29,7 +26,7 @@ if database_url:
         database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
     
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    # Важно: для psycopg3 необходимо указать poolclass=NullPool
+    # Для psycopg3 необходимо указать poolclass=NullPool
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_recycle': 300,  # Пересоздавать соединения каждые 5 минут
         'pool_pre_ping': True,  # Проверять соединение перед использованием
@@ -39,13 +36,10 @@ if database_url:
 else:
     # Локальная разработка - используем SQLite
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
-    # Для SQLite не нужны особые настройки пула, как для psycopg3
+    # Для SQLite не нужны особые настройки пула
     print("Используется SQLite (локальная разработка)")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# Для продакшена с PostgreSQL настройки POOL_SIZE и MAX_OVERFLOW
-# задаются внутри SQLALCHEMY_ENGINE_OPTIONS, если нужны.
-# Для локального SQLite их можно оставить, но они не будут использоваться.
 
 db = SQLAlchemy(app)
 
@@ -118,41 +112,28 @@ def login_required(f):
     decorated_function.__name__ = f.__name__
     return decorated_function
 
-# Функция для регистронезависимого поиска в SQLite
-def case_insensitive_like(field, value):
-    """
-    Создает условие для регистронезависимого поиска в SQLite.
-    Для кириллицы используем COLLATE NOCASE
-    """
-    # Используем LIKE с COLLATE NOCASE для поддержки кириллицы
-    return field.like(f'%{value}%')
-
 # Главная страница
 @app.route('/')
 def index():
-    search_query_input = request.args.get('q', '').strip()  # сохраняем как ввел пользователь
-    search_query_lower = search_query_input.lower()  # для поиска в нижнем регистре
+    search_query_input = request.args.get('q', '').strip()
+    search_query_lower = search_query_input.lower()
     search_field = request.args.get('field', 'all')
     
     if 'user_id' in session:
         user = User.query.get(session['user_id'])
         if user:
-            # Базовый запрос для текущего пользователя
             query = Contragent.query.filter_by(user_id=session['user_id'])
             
-            if search_query_lower:  # ИСПРАВЛЕНО: используем search_query_lower
+            if search_query_lower:
                 if search_field == 'all':
-                    # Получаем всех контрагентов пользователя
                     all_contragents = query.options(
                         db.joinedload(Contragent.phones),
                         db.joinedload(Contragent.emails),
                         db.joinedload(Contragent.websites)
                     ).all()
                     
-                    # Фильтруем на стороне Python
                     filtered_contragents = []
                     for contragent in all_contragents:
-                        # Проверяем основные поля
                         if (search_query_lower in (contragent.org_name or '').lower() or
                             search_query_lower in (contragent.inn or '').lower() or
                             search_query_lower in (contragent.contact_person or '').lower() or
@@ -161,34 +142,27 @@ def index():
                             filtered_contragents.append(contragent)
                             continue
                         
-                        # Проверяем телефоны
                         if any(search_query_lower in phone.number.lower() for phone in contragent.phones):
                             filtered_contragents.append(contragent)
                             continue
                         
-                        # Проверяем email
                         if any(search_query_lower in email.address.lower() for email in contragent.emails):
                             filtered_contragents.append(contragent)
                             continue
                         
-                        # Проверяем сайты
                         if any(search_query_lower in website.url.lower() for website in contragent.websites):
                             filtered_contragents.append(contragent)
                             continue
                     
-                    # Сортировка по убыванию ID (новые сверху)
                     contragents = sorted(filtered_contragents, key=lambda x: x.id, reverse=True)
                     
-                    # ИСПРАВЛЕНО: передаем search_query_input (оригинальную строку)
                     return render_template('index.html', 
                                         contragents=contragents, 
                                         search_query=search_query_input, 
                                         search_field=search_field,
                                         user=user)
                 
-                # Для конкретных полей используем фильтрацию на стороне Python
                 elif search_field in ['org_name', 'contact_person', 'position', 'address']:
-                    # Получаем всех контрагентов и фильтруем
                     all_contragents = query.all()
                     filtered = []
                     
@@ -207,8 +181,6 @@ def index():
                     
                     contragents = sorted(filtered, key=lambda x: x.id, reverse=True)
                     
-                # Для остальных полей (INN, телефоны, email, сайты) используем SQL LIKE
-                # так как они обычно не содержат кириллицу
                 else:
                     if search_field == 'inn':
                         query = query.filter(Contragent.inn.like(f'%{search_query_lower}%'))
@@ -221,7 +193,6 @@ def index():
                     
                     contragents = query.order_by(Contragent.id.desc()).all()
                 
-                # ИСПРАВЛЕНО: передаем search_query_input (оригинальную строку)
                 return render_template('index.html', 
                                     contragents=contragents, 
                                     search_query=search_query_input, 
@@ -229,17 +200,13 @@ def index():
                                     user=user)
             
             else:
-                # Если нет поискового запроса, просто показываем все
                 contragents = query.order_by(Contragent.id.desc()).all()
-                
-                # ИСПРАВЛЕНО: передаем search_query_input (оригинальную строку)
                 return render_template('index.html', 
                                     contragents=contragents, 
                                     search_query=search_query_input, 
                                     search_field=search_field,
                                     user=user)
     
-    # ИСПРАВЛЕНО: передаем search_query_input (оригинальную строку)
     return render_template('index.html', 
                          contragents=[], 
                          search_query=search_query_input, 
@@ -255,7 +222,6 @@ def register():
         confirm_password = request.form.get('confirm_password')
         email = request.form.get('email')
         
-        # Проверки
         if not username or not password:
             flash('Заполните все обязательные поля', 'danger')
             return redirect(url_for('register'))
@@ -264,23 +230,20 @@ def register():
             flash('Пароли не совпадают', 'danger')
             return redirect(url_for('register'))
         
-        # Если email пустой, ставим None
         if email == '':
             email = None
         
-        # Проверяем, существует ли пользователь
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             flash('Пользователь с таким именем уже существует', 'danger')
             return redirect(url_for('register'))
         
-        if email:  # Проверяем email только если он указан
+        if email:
             existing_email = User.query.filter_by(email=email).first()
             if existing_email:
                 flash('Пользователь с таким email уже существует', 'danger')
                 return redirect(url_for('register'))
         
-        # Создаем нового пользователя
         new_user = User(username=username, email=email)
         new_user.set_password(password)
         
@@ -349,11 +312,9 @@ def api_register():
     password = data.get('password')
     email = data.get('email')
     
-    # Если email пустой, ставим None
     if email == '':
         email = None
     
-    # Проверяем, существует ли пользователь
     existing_user = User.query.filter_by(username=username).first()
     if existing_user:
         return jsonify({'success': False, 'message': 'Пользователь с таким именем уже существует'})
@@ -363,7 +324,6 @@ def api_register():
         if existing_email:
             return jsonify({'success': False, 'message': 'Пользователь с таким email уже существует'})
     
-    # Создаем нового пользователя
     new_user = User(username=username, email=email)
     new_user.set_password(password)
     
@@ -383,29 +343,24 @@ def add_contragent():
     contragent_to_copy = None
     
     if copy_id:
-        # Проверяем, что контрагент для копирования принадлежит текущему пользователю
         contragent_to_copy = Contragent.query.filter_by(id=copy_id, user_id=session['user_id']).first()
     
     if request.method == 'POST':
         try:
-            # Получаем данные из формы
             org_name = request.form.get('org_name')
             inn = request.form.get('inn')
             contact_person = request.form.get('contact_person')
             position = request.form.get('position')
             address = request.form.get('address')
             
-            # Получаем списки телефонов, email и сайтов
             phones = request.form.getlist('phones[]')
             emails = request.form.getlist('emails[]')
             websites = request.form.getlist('websites[]')
             
-            # Проверяем обязательные поля
             if not org_name:
                 flash('Название организации обязательно для заполнения', 'danger')
                 return redirect(url_for('add_contragent'))
             
-            # Создаем нового контрагента с привязкой к текущему пользователю
             contragent = Contragent(
                 org_name=org_name,
                 inn=inn if inn else None,
@@ -418,19 +373,16 @@ def add_contragent():
             db.session.add(contragent)
             db.session.flush()
             
-            # Добавляем телефоны
             for phone in phones:
                 if phone and phone.strip():
                     phone_obj = Phone(contragent_id=contragent.id, number=phone.strip())
                     db.session.add(phone_obj)
             
-            # Добавляем email
             for email in emails:
                 if email and email.strip():
                     email_obj = Email(contragent_id=contragent.id, address=email.strip())
                     db.session.add(email_obj)
             
-            # Добавляем сайты
             for website in websites:
                 if website and website.strip():
                     website_obj = Website(contragent_id=contragent.id, url=website.strip())
@@ -456,41 +408,34 @@ def add_contragent():
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_contragent(id):
-    # Получаем контрагента и проверяем, что он принадлежит текущему пользователю
     contragent = Contragent.query.filter_by(id=id, user_id=session['user_id']).first_or_404()
     
     if request.method == 'POST':
         try:
-            # Обновляем основные данные
             contragent.org_name = request.form.get('org_name')
             contragent.inn = request.form.get('inn')
             contragent.contact_person = request.form.get('contact_person')
             contragent.position = request.form.get('position')
             contragent.address = request.form.get('address')
             
-            # Удаляем старые телефоны, email и сайты
             Phone.query.filter_by(contragent_id=contragent.id).delete()
             Email.query.filter_by(contragent_id=contragent.id).delete()
             Website.query.filter_by(contragent_id=contragent.id).delete()
             
-            # Получаем данные из формы
             phones = request.form.getlist('phones[]')
             emails = request.form.getlist('emails[]')
             websites = request.form.getlist('websites[]')
             
-            # Добавляем новые телефоны
             for phone in phones:
                 if phone and phone.strip():
                     phone_obj = Phone(contragent_id=contragent.id, number=phone.strip())
                     db.session.add(phone_obj)
             
-            # Добавляем новые email
             for email in emails:
                 if email and email.strip():
                     email_obj = Email(contragent_id=contragent.id, address=email.strip())
                     db.session.add(email_obj)
             
-            # Добавляем новые сайты
             for website in websites:
                 if website and website.strip():
                     website_obj = Website(contragent_id=contragent.id, url=website.strip())
@@ -521,7 +466,6 @@ def edit_contragent(id):
 @login_required
 def delete_contragent(id):
     try:
-        # Проверяем, что контрагент принадлежит текущему пользователю
         contragent = Contragent.query.filter_by(id=id, user_id=session['user_id']).first()
         
         if not contragent:
@@ -538,24 +482,19 @@ def delete_contragent(id):
 def init_database():
     with app.app_context():
         try:
-            # Создаем таблицы
             db.create_all()
             print("✅ Таблицы базы данных созданы/проверены")
             
-            # Создаем тестового пользователя только если таблица пуста
             if User.query.count() == 0:
                 test_user = User(username='admin', email='admin@example.com')
                 test_user.set_password('admin123')
                 db.session.add(test_user)
-                db.session.commit()  # Убедитесь, что это есть
+                db.session.commit()
                 print("✅ Создан тестовый пользователь:")
                 print("   Логин: admin")
                 print("   Пароль: admin123")
             else:
                 print(f"ℹ️  В базе уже есть {User.query.count()} пользователей")
-            
-            # ЯВНО СОХРАНЯЕМ ИЗМЕНЕНИЯ
-            db.session.commit()
                 
         except Exception as e:
             print(f"❌ Ошибка при инициализации базы данных: {e}")
@@ -565,14 +504,7 @@ def init_database():
 init_database()
 
 if __name__ == '__main__':
-    # Получаем порт из переменной окружения PORT (Render сам установит)
-    # Если PORT не задан, используем 5000 для локальной разработки
     port = int(os.environ.get('PORT', 5000))
-    
-    # Запускаем приложение
-    # ВНИМАНИЕ: debug=True только для локальной разработки!
-    # На Render нужно использовать debug=False
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
-    
     app.run(host='0.0.0.0', port=port, debug=debug_mode)
     print(f"🚀 Приложение запущено на порту {port}, debug={debug_mode}")
