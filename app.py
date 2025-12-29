@@ -24,6 +24,10 @@ if database_url:
     if database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_recycle': 300,  # Пересоздавать соединения каждые 5 минут
+        'pool_pre_ping': True,  # Проверять соединение перед использованием
+    }
     print(f"Используется PostgreSQL: {database_url[:50]}...")  # Для отладки
 else:
     # Локальная разработка - используем SQLite
@@ -31,7 +35,8 @@ else:
     print("Используется SQLite (локальная разработка)")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['STATIC_FOLDER'] = 'static'
+app.config['SQLALCHEMY_POOL_SIZE'] = 10
+app.config['SQLALCHEMY_MAX_OVERFLOW'] = 20
 
 db = SQLAlchemy(app)
 
@@ -533,15 +538,19 @@ def init_database():
                 test_user = User(username='admin', email='admin@example.com')
                 test_user.set_password('admin123')
                 db.session.add(test_user)
-                db.session.commit()
+                db.session.commit()  # Убедитесь, что это есть
                 print("✅ Создан тестовый пользователь:")
                 print("   Логин: admin")
                 print("   Пароль: admin123")
             else:
                 print(f"ℹ️  В базе уже есть {User.query.count()} пользователей")
+            
+            # ЯВНО СОХРАНЯЕМ ИЗМЕНЕНИЯ
+            db.session.commit()
                 
         except Exception as e:
             print(f"❌ Ошибка при инициализации базы данных: {e}")
+            db.session.rollback()
 
 # Инициализируем базу данных при запуске
 init_database()
