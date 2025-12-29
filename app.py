@@ -13,36 +13,44 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-ключ')
 
 # --- НАСТРОЙКА БАЗЫ ДАННЫХ ---
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 database_url = os.environ.get('DATABASE_URL')
-engine_options = {}
+engine = None
 
 if database_url:
-    # КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: для psycopg3 используется диалект 'postgresql+psycopg://'
+    # Ключевое исправление для psycopg3
     if database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     
-    # ЯВНО УКАЗЫВАЕМ SQLAlchemy ИСПОЛЬЗОВАТЬ ДИАЛЕКТ PSYCOPG (v3)
-    engine_options = {
-        'connect_args': {
-            "sslmode": "require"  # Важно для подключения к Render Postgres
-        },
-        'pool_recycle': 300,
-        'pool_pre_ping': True,
-        'poolclass': NullPool,
+    # ЯВНО создаем движок с диалектом psycopg
+    engine = create_engine(
+        database_url,
+        pool_recycle=300,
+        pool_pre_ping=True,
+        poolclass=NullPool,
+        connect_args={
+            "sslmode": "require"
+        }
+    )
+    
+    # Передаем созданный движок в SQLAlchemy
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'creator': lambda: engine.connect()
     }
-    print(f"Используется PostgreSQL (с psycopg3): {database_url[:50]}...")
+    
+    print(f"✅ Используется PostgreSQL с явным движком psycopg3: {database_url[:50]}...")
 else:
     # Локальная разработка
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
-    engine_options = {}
     print("Используется SQLite (локальная разработка)")
 
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = engine_options
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # --- КОНЕЦ НАСТРОЙКИ БАЗЫ ---
 
+# Инициализируем db ПОСЛЕ настройки движка
 db = SQLAlchemy(app)
 # ... остальной код (модели, роуты) остаётся без изменений ...
 
