@@ -42,7 +42,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# ДОБАВЬТЕ ЭТОТ МАРШРУТ ДЛЯ FAVICON
+# ДОБАВЬТЕ ЭТОТ МАРШРУТ ДЛЯ FAVICON++
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
