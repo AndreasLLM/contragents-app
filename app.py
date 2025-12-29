@@ -14,6 +14,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-ключ')
 
 # --- НАСТРОЙКА БАЗЫ ДАННЫХ ---
 database_url = os.environ.get('DATABASE_URL')
+engine_options = {}
 
 if database_url:
     # КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: для psycopg3 используется диалект 'postgresql+psycopg://'
@@ -21,19 +22,24 @@ if database_url:
         database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
 
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    # Эти настройки ВАЖНЫ для psycopg3 на Render:
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    
+    # ЯВНО УКАЗЫВАЕМ SQLAlchemy ИСПОЛЬЗОВАТЬ ДИАЛЕКТ PSYCOPG (v3)
+    engine_options = {
+        'connect_args': {
+            "sslmode": "require"  # Важно для подключения к Render Postgres
+        },
         'pool_recycle': 300,
         'pool_pre_ping': True,
         'poolclass': NullPool,
     }
-    # В логах Render должно появиться это сообщение:
     print(f"Используется PostgreSQL (с psycopg3): {database_url[:50]}...")
 else:
     # Локальная разработка
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
+    engine_options = {}
     print("Используется SQLite (локальная разработка)")
 
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = engine_options
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # --- КОНЕЦ НАСТРОЙКИ БАЗЫ ---
 
