@@ -1,7 +1,7 @@
-Flask==3.0.0
-Flask-SQLAlchemy==3.1.1
-SQLAlchemy==2.0.25
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+SQLAlchemy==2.0.31  # ← ОБНОВЛЕНО! (поддерживает Python 3.13)
 psycopg[binary,pool]==3.3.2
 python-dotenv==1.0.0
-gunicorn==22.0.0
-Werkzeug==3.0.1
+gunicorn==21.2.0
+Werkzeug==2.3.7
