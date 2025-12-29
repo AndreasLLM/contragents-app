@@ -5,36 +5,40 @@ from datetime import datetime
 import os
 from sqlalchemy import or_, func, text
 from dotenv import load_dotenv
+# ИМЕННО ДЛЯ PSYCOPG3 НУЖЕН NullPool:
+from sqlalchemy.pool import NullPool
 
-# Загружаем переменные окружения из .env файла для локальной разработки
 load_dotenv()
-
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-ключ')
 
-# Безопасная конфигурация для Render
-# Получаем секретный ключ из переменных окружения (безопаснее) или используем fallback
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-очень-длинный-секретный-ключ-измените-это')
-
-# Умная настройка БД: на Render используем PostgreSQL, локально - SQLite
+# --- НАСТРОЙКА БАЗЫ ДАННЫХ ---
 database_url = os.environ.get('DATABASE_URL')
 
 if database_url:
-    # 1. Меняем протокол для psycopg2-binary
+    # КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: для psycopg3 используется диалект 'postgresql+psycopg://'
     if database_url.startswith('postgres://'):
-        database_url = database_url.replace('postgres://', 'postgresql://', 1)
-    
+        database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
+
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    # 2. УДАЛИТЕ или закомментируйте весь блок SQLALCHEMY_ENGINE_OPTIONS
-    # Для psycopg2-binary он не нужен и может вызывать ошибки.
-    # app.config['SQLALCHEMY_ENGINE_OPTIONS'] = { ... }
-    print(f"Используется PostgreSQL (с psycopg2): {database_url[:50]}...")
+    # Эти настройки ВАЖНЫ для psycopg3 на Render:
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_recycle': 300,
+        'pool_pre_ping': True,
+        'poolclass': NullPool,
+    }
+    # В логах Render должно появиться это сообщение:
+    print(f"Используется PostgreSQL (с psycopg3): {database_url[:50]}...")
 else:
+    # Локальная разработка
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contragents.db'
     print("Используется SQLite (локальная разработка)")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# --- КОНЕЦ НАСТРОЙКИ БАЗЫ ---
 
 db = SQLAlchemy(app)
+# ... остальной код (модели, роуты) остаётся без изменений ...
 
 # ДОБАВЬТЕ ЭТОТ МАРШРУТ ДЛЯ FAVICON++
 @app.route('/favicon.ico')
