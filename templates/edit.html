@@ -321,76 +321,76 @@
             </div>
             
             <!-- ТЕЛЕФОНЫ -->
-            <div class="multi-fields-section">
-                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Телефоны:</label>
-                <div id="phoneFields">
-                    {% for phone in contragent.phones %}
-                    <div class="multi-field-group">
-                        <input type="text" name="number" class="form-input" 
-                               value="{{ phone.number }}" maxlength="20">
-                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updatePhoneCounters()">×</button>
-                    </div>
-                    {% endfor %}
-                    {% if contragent.phones|length == 0 %}
-                    <div class="multi-field-group">
-                        <input type="text" name="number" class="form-input" placeholder="+7 (XXX) XXX-XX-XX" maxlength="20">
-                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updatePhoneCounters()">×</button>
-                    </div>
-                    {% endif %}
-                </div>
-                <button type="button" class="add-field-btn" onclick="addField('phoneFields', 'number', 'Телефон', 'text', '+7 (XXX) XXX-XX-XX', 20, updatePhoneCounters)">
-                    <span>+</span> Добавить телефон
-                </button>
-                <div class="form-info">Максимум 20 символов для каждого телефона</div>
-            </div>
-            
-            <!-- EMAIL -->
-            <div class="multi-fields-section">
-                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Email адреса:</label>
-                <div id="emailFields">
-                    {% for email in contragent.emails %}
-                    <div class="multi-field-group">
-                        <input type="email" name="email_address" class="form-input" 
-                               value="{{ email.address }}" maxlength="50">
-                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateEmailCounters()">×</button>
-                    </div>
-                    {% endfor %}
-                    {% if contragent.emails|length == 0 %}
-                    <div class="multi-field-group">
-                        <input type="email" name="email_address" class="form-input" placeholder="example@mail.com" maxlength="50">
-                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateEmailCounters()">×</button>
-                    </div>
-                    {% endif %}
-                </div>
-                <button type="button" class="add-field-btn" onclick="addField('emailFields', 'email_address', 'Email', 'email', 'example@mail.com', 50, updateEmailCounters)">
-                    <span>+</span> Добавить email
-                </button>
-                <div class="form-info">Максимум 50 символов для каждого email</div>
-            </div>
-            
-            <!-- САЙТЫ -->
-            <div class="multi-fields-section">
-                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Веб-сайты:</label>
-                <div id="websiteFields">
-                    {% for site in contragent.websites %}
-                    <div class="multi-field-group">
-                        <input type="text" name="url" class="form-input" 
-                               value="{{ site.url }}" maxlength="200">
-                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateWebsiteCounters()">×</button>
-                    </div>
-                    {% endfor %}
-                    {% if contragent.websites|length == 0 %}
-                    <div class="multi-field-group">
-                        <input type="text" name="url" class="form-input" placeholder="example.com или любой текст" maxlength="200">
-                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateWebsiteCounters()">×</button>
-                    </div>
-                    {% endif %}
-                </div>
-                <button type="button" class="add-field-btn" onclick="addField('websiteFields', 'url', 'Сайт', 'text', 'example.com или любой текст', 200, updateWebsiteCounters)">
-                    <span>+</span> Добавить сайт
-                </button>
-                <div class="form-info">Максимум 200 символов (можно вводить "нет сайте" или любой текст)</div>
-            </div>
+<div class="multi-fields-section">
+    <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Телефоны:</label>
+    <div id="phoneFields">
+        {% for phone in contragent.phones %}
+        <div class="multi-field-group">
+            <input type="text" name="phones[]" class="form-input" 
+                   value="{{ phone.number }}" maxlength="20">
+            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updatePhoneCounters()">×</button>
+        </div>
+        {% endfor %}
+        {% if contragent.phones|length == 0 %}
+        <div class="multi-field-group">
+            <input type="text" name="phones[]" class="form-input" placeholder="+7 (XXX) XXX-XX-XX" maxlength="20">
+            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updatePhoneCounters()">×</button>
+        </div>
+        {% endif %}
+    </div>
+    <button type="button" class="add-field-btn" onclick="addField('phoneFields', 'phones[]', 'Телефон', 'text', '+7 (XXX) XXX-XX-XX', 20, updatePhoneCounters)">
+        <span>+</span> Добавить телефон
+    </button>
+    <div class="form-info">Максимум 20 символов для каждого телефона</div>
+</div>
+
+<!-- EMAIL -->
+<div class="multi-fields-section">
+    <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Email адреса:</label>
+    <div id="emailFields">
+        {% for email in contragent.emails %}
+        <div class="multi-field-group">
+            <input type="email" name="emails[]" class="form-input" 
+                   value="{{ email.address }}" maxlength="50">
+            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateEmailCounters()">×</button>
+        </div>
+        {% endfor %}
+        {% if contragent.emails|length == 0 %}
+        <div class="multi-field-group">
+            <input type="email" name="emails[]" class="form-input" placeholder="example@mail.com" maxlength="50">
+            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateEmailCounters()">×</button>
+        </div>
+        {% endif %}
+    </div>
+    <button type="button" class="add-field-btn" onclick="addField('emailFields', 'emails[]', 'Email', 'email', 'example@mail.com', 50, updateEmailCounters)">
+        <span>+</span> Добавить email
+    </button>
+    <div class="form-info">Максимум 50 символов для каждого email</div>
+</div>
+
+<!-- САЙТЫ -->
+<div class="multi-fields-section">
+    <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Веб-сайты:</label>
+    <div id="websiteFields">
+        {% for site in contragent.websites %}
+        <div class="multi-field-group">
+            <input type="text" name="websites[]" class="form-input" 
+                   value="{{ site.url }}" maxlength="200">
+            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateWebsiteCounters()">×</button>
+        </div>
+        {% endfor %}
+        {% if contragent.websites|length == 0 %}
+        <div class="multi-field-group">
+            <input type="text" name="websites[]" class="form-input" placeholder="example.com или любой текст" maxlength="200">
+            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateWebsiteCounters()">×</button>
+        </div>
+        {% endif %}
+    </div>
+    <button type="button" class="add-field-btn" onclick="addField('websiteFields', 'websites[]', 'Сайт', 'text', 'example.com или любой текст', 200, updateWebsiteCounters)">
+        <span>+</span> Добавить сайт
+    </button>
+    <div class="form-info">Максимум 200 символов (можно вводить "нет сайте" или любой текст)</div>
+</div>
             
             <!-- КНОПКА В ФОРМЕ -->
             <div class="form-buttons">
