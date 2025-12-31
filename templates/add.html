@@ -292,8 +292,8 @@
                 <div class="form-group">
                     <label for="inn">ИНН:</label>
                     <input type="text" id="inn" name="inn" class="form-input" 
-                           value="{{ contragent.inn if contragent else '' }}" maxlength="20">
-                    <div class="char-counter" id="inn_counter">{{ (contragent.inn|length if contragent and contragent.inn else 0) }}/20</div>
+       value="{{ contragent.inn if contragent and contragent.inn is not none else '' }}" maxlength="20">
+                    <div class="char-counter" id="inn_counter">{{ (contragent.inn|length if contragent and contragent.inn is not none else 0) }}/20</div>
                 </div>
             </div>
             
@@ -301,23 +301,23 @@
                 <div class="form-group">
                     <label for="contact_person">Контактное лицо:</label>
                     <input type="text" id="contact_person" name="contact_person" class="form-input" 
-                           value="{{ contragent.contact_person if contragent else '' }}" maxlength="50">
-                    <div class="char-counter" id="contact_person_counter">{{ (contragent.contact_person|length if contragent and contragent.contact_person else 0) }}/50</div>
+       value="{{ contragent.contact_person if contragent and contragent.contact_person is not none else '' }}" maxlength="50">
+                    <div class="char-counter" id="contact_person_counter">{{ (contragent.contact_person|length if contragent and contragent.contact_person is not none else 0) }}/50</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="position">Должность:</label>
                     <input type="text" id="position" name="position" class="form-input" 
-                           value="{{ contragent.position if contragent else '' }}" maxlength="50">
-                    <div class="char-counter" id="position_counter">{{ (contragent.position|length if contragent and contragent.position else 0) }}/50</div>
+       value="{{ contragent.position if contragent and contragent.position is not none else '' }}" maxlength="50">
+                    <div class="char-counter" id="position_counter">{{ (contragent.position|length if contragent and contragent.position is not none else 0) }}/50</div>
                 </div>
             </div>
             
             <div class="form-group">
                 <label for="address">Адрес:</label>
                 <input type="text" id="address" name="address" class="form-input" 
-                       value="{{ contragent.address if contragent else '' }}" maxlength="50">
-                <div class="char-counter" id="address_counter">{{ (contragent.address|length if contragent and contragent.address else 0) }}/50</div>
+       value="{{ contragent.address if contragent and contragent.address is not none else '' }}" maxlength="50">
+                <div class="char-counter" id="address_counter">{{ (contragent.address|length if contragent and contragent.address is not none else 0) }}/50</div>
             </div>
             
             <!-- ТЕЛЕФОНЫ -->
