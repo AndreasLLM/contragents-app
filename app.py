@@ -9,6 +9,7 @@ from sqlalchemy.pool import NullPool
 from urllib.parse import urlparse
 
 load_dotenv()
+IS_LOCAL_DEV = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-ключ')
 
@@ -25,11 +26,33 @@ if not database_url:
     print("✅ Или добавьте в .env файл для локальной разработки")
     exit(1)
 
+# Для локальной разработки выводим больше информации
+if IS_LOCAL_DEV:
+    print("⚠️  РЕЖИМ ЛОКАЛЬНОЙ РАЗРАБОТКИ")
+    print(f"📦 DATABASE_URL из .env: {database_url[:50]}...")
+
 # Преобразование URL для psycopg3
 if database_url.startswith('postgres://'):
     database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
 elif database_url.startswith('postgresql://'):
     database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
+
+# Определяем, работаем ли мы на Render (для SSL)
+is_render = 'onrender.com' in database_url or 'RENDER' in os.environ
+
+# Настройки движка
+engine_options = {
+    'pool_recycle': 300,
+    'pool_pre_ping': True,
+    'poolclass': NullPool,
+}
+
+# SSL только для Render
+if is_render and not IS_LOCAL_DEV:
+    engine_options['connect_args'] = {"sslmode": "require"}
+    print(f"✅ Настроено SSL подключение (требуется для Render)")
+elif IS_LOCAL_DEV:
+    print(f"✅ Локальная разработка - SSL не требуется")
 
 # Логирование (без пароля)
 safe_url = database_url
@@ -43,23 +66,7 @@ if '@' in database_url:
 print(f"✅ Используется PostgreSQL с диалектом psycopg3")
 print(f"✅ Преобразованный URL: {safe_url[:100]}...")
 
-# Определяем, работаем ли мы на Render (для SSL)
-is_render = 'onrender.com' in database_url or 'RENDER' in os.environ
-
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-
-# Настройки движка
-engine_options = {
-    'pool_recycle': 300,
-    'pool_pre_ping': True,
-    'poolclass': NullPool,
-}
-
-# SSL только для Render
-if is_render:
-    engine_options['connect_args'] = {"sslmode": "require"}
-    print(f"✅ Настроено SSL подключение (требуется для Render)")
-
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = engine_options
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # --- КОНЕЦ НАСТРОЙКИ БАЗЫ ---
