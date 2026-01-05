@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ lang }}">
 <head>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Редактировать контрагента</title>
+    <title>{% if is_copy %}{{ t.copy_contragent }}{% else %}{{ t.edit_contragent }}{% endif %}</title>
     <style>
         :root {
             --primary-color: #5dade2;
@@ -61,43 +62,43 @@
         /* КНОПКА НАЗАД - ЗЕЛЕНАЯ И УВЕЛИЧЕННАЯ */
         .back-button {
             display: inline-block;
-            background-color: #28a745; /* ЗЕЛЕНЫЙ ЦВЕТ */
+            background-color: #28a745;
             color: white;
-            padding: 10px 20px; /* УВЕЛИЧЕННЫЕ ОТСТУПЫ */
+            padding: 10px 20px;
             text-decoration: none;
             border-radius: 6px;
-            font-size: 16px; /* УВЕЛИЧЕННЫЙ ШРИФТ */
-            font-weight: 600; /* БОЛЕЕ ЖИРНЫЙ */
+            font-size: 16px;
+            font-weight: 600;
             margin-top: 8px;
             transition: all 0.2s;
         }
         
         .back-button:hover {
-            background-color: #5dade2; /* ← СВЕТЛО-СИНИЙ (primary-color) */
-    transform: translateY(-2px);
+            background-color: #5dade2;
+            transform: translateY(-2px);
         }
         
         .form-panel {
             background: white;
-            padding: 12px 16px; /* УМЕНЬШЕННЫЕ ОТСТУПЫ */
+            padding: 12px 16px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* БОЛЕЕ СВЕТЛАЯ ТЕНЬ */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 8px; /* УМЕНЬШЕННОЕ РАССТОЯНИЕ МЕЖДУ КОЛОНКАМИ */
-            margin-bottom: 8px; /* УМЕНЬШЕННОЕ РАССТОЯНИЕ МЕЖДУ СТРОКАМИ */
+            gap: 8px;
+            margin-bottom: 8px;
         }
         
         .form-group {
-            margin-bottom: -20px; /* ОТРИЦАТЕЛЬНЫЙ MARGIN ДЛЯ КОМПАКТНОСТИ */
+            margin-bottom: -20px;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 4px; /* МИНИМАЛЬНОЕ РАССТОЯНИЕ МЕЖДУ ЛЕЙБЛОМ И ПОЛЕМ */
+            margin-bottom: 4px;
             color: #495057;
             font-weight: 600;
             font-size: 14px;
@@ -105,12 +106,12 @@
         
         .form-input {
             width: 100%;
-            padding: 8px 10px; /* УМЕНЬШЕННЫЕ ОТСТУПЫ */
+            padding: 8px 10px;
             border: 1px solid #ced4da;
             border-radius: 5px;
             font-size: 14px;
             box-sizing: border-box;
-            height: 38px; /* НЕМНОГО УМЕНЬШЕНА ВЫСОТА */
+            height: 38px;
         }
         
         .char-counter {
@@ -124,23 +125,23 @@
         /* МНОЖЕСТВЕННЫЕ ПОЛЯ */
         .multi-fields-section {
             background: #f8f9fa;
-            padding: 10px; /* УМЕНЬШЕННЫЕ ОТСТУПЫ */
+            padding: 10px;
             border-radius: 6px;
-            margin-bottom: 8px; /* УМЕНЬШЕННЫЙ ОТСТУП СНИЗУ */
+            margin-bottom: 8px;
             border: 1px solid #e9ecef;
         }
         
         .multi-field-group {
             display: flex;
-            gap: 6px; /* УМЕНЬШЕННОЕ РАССТОЯНИЕ МЕЖДУ ЭЛЕМЕНТАМИ */
-            margin-bottom: 6px; /* УМЕНЬШЕННЫЙ ОТСТУП СНИЗУ */
+            gap: 6px;
+            margin-bottom: 6px;
             align-items: center;
         }
         
         .multi-field-group input {
             flex: 1;
-            padding: 8px 10px; /* УМЕНЬШЕННЫЕ ОТСТУПЫ */
-            height: 36px; /* УМЕНЬШЕННАЯ ВЫСОТА */
+            padding: 8px 10px;
+            height: 36px;
         }
         
         /* КРЕСТИКИ С БЕЛОЙ ЗАЛИВКОЙ */
@@ -193,7 +194,7 @@
         
         /* КНОПКИ В ФОРМЕ - ЗЕЛЕНЫЕ */
         .form-button {
-            background-color: #28a745; /* ЗЕЛЕНЫЙ ЦВЕТ */
+            background-color: #28a745;
             color: white;
             padding: 12px 24px;
             border: none;
@@ -208,13 +209,13 @@
         }
         
         .form-button:hover {
-            background-color: #218838; /* ТЕМНО-ЗЕЛЕНЫЙ ПРИ НАВЕДЕНИИ */
+            background-color: #218838;
             transform: translateY(-2px);
         }
         
         .form-buttons {
-            margin-top: 15px; /* УМЕНЬШЕННЫЙ ОТСТУП СВЕРХУ */
-            padding-top: 12px; /* УМЕНЬШЕННЫЙ ОТСТУП СВЕРХУ */
+            margin-top: 15px;
+            padding-top: 12px;
             border-top: 1px solid #e9ecef;
             text-align: center;
         }
@@ -268,11 +269,11 @@
     <!-- ЗАГОЛОВОК С КНОПКОЙ -->
     <div class="header-container">
         <div>
-            <h1>✏️ Редактировать контрагента</h1>
-            <a href="{{ url_for('index') }}" class="back-button">← Назад</a>
+            <h1>✏️ {% if is_copy %}{{ t.copy_contragent }}{% else %}{{ t.edit }}{% endif %}</h1>
+            <a href="{{ url_for('index') }}" class="back-button">← {{ t.to_main }}</a>
         </div>
         <button type="submit" form="editForm" class="header-button">
-            <span>💾</span> Сохранить изменения
+            <span>💾</span> {% if is_copy %}{{ t.create_copy }}{% else %}{{ t.save_changes }}{% endif %}
         </button>
     </div>
     
@@ -283,14 +284,14 @@
             <!-- ОСНОВНЫЕ ПОЛЯ -->
             <div class="form-row">
                 <div class="form-group">
-                    <label for="org_name" class="required">Наименование организации:</label>
+                    <label for="org_name" class="required">{{ t.organization_name }}:</label>
                     <input type="text" id="org_name" name="org_name" class="form-input" 
                            value="{{ contragent.org_name }}" required maxlength="50">
                     <div class="char-counter" id="org_name_counter">{{ contragent.org_name|length }}/50</div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="inn">ИНН:</label>
+                    <label for="inn">{{ t.inn }}:</label>
                     <input type="text" id="inn" name="inn" class="form-input" 
                            value="{{ contragent.inn or '' }}" maxlength="20">
                     <div class="char-counter" id="inn_counter">{{ (contragent.inn or '')|length }}/20</div>
@@ -299,14 +300,14 @@
             
             <div class="form-row">
                 <div class="form-group">
-                    <label for="contact_person">Контактное лицо:</label>
+                    <label for="contact_person">{{ t.contact_person }}:</label>
                     <input type="text" id="contact_person" name="contact_person" class="form-input" 
                            value="{{ contragent.contact_person or '' }}" maxlength="50">
                     <div class="char-counter" id="contact_person_counter">{{ (contragent.contact_person or '')|length }}/50</div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="position">Должность:</label>
+                    <label for="position">{{ t.position }}:</label>
                     <input type="text" id="position" name="position" class="form-input" 
                            value="{{ contragent.position or '' }}" maxlength="50">
                     <div class="char-counter" id="position_counter">{{ (contragent.position or '')|length }}/50</div>
@@ -314,88 +315,88 @@
             </div>
             
             <div class="form-group">
-                <label for="address">Адрес:</label>
+                <label for="address">{{ t.address }}:</label>
                 <input type="text" id="address" name="address" class="form-input" 
                        value="{{ contragent.address or '' }}" maxlength="50">
                 <div class="char-counter" id="address_counter">{{ (contragent.address or '')|length }}/50</div>
             </div>
             
             <!-- ТЕЛЕФОНЫ -->
-<div class="multi-fields-section">
-    <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Телефоны:</label>
-    <div id="phoneFields">
-        {% for phone in contragent.phones %}
-        <div class="multi-field-group">
-            <input type="text" name="phones[]" class="form-input" 
-                   value="{{ phone.number }}" maxlength="20">
-            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updatePhoneCounters()">×</button>
-        </div>
-        {% endfor %}
-        {% if contragent.phones|length == 0 %}
-        <div class="multi-field-group">
-            <input type="text" name="phones[]" class="form-input" placeholder="+7 (XXX) XXX-XX-XX" maxlength="20">
-            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updatePhoneCounters()">×</button>
-        </div>
-        {% endif %}
-    </div>
-    <button type="button" class="add-field-btn" onclick="addField('phoneFields', 'phones[]', 'Телефон', 'text', '+7 (XXX) XXX-XX-XX', 20, updatePhoneCounters)">
-        <span>+</span> Добавить телефон
-    </button>
-    <div class="form-info">Максимум 20 символов для каждого телефона</div>
-</div>
-
-<!-- EMAIL -->
-<div class="multi-fields-section">
-    <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Email адреса:</label>
-    <div id="emailFields">
-        {% for email in contragent.emails %}
-        <div class="multi-field-group">
-            <input type="email" name="emails[]" class="form-input" 
-                   value="{{ email.address }}" maxlength="50">
-            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateEmailCounters()">×</button>
-        </div>
-        {% endfor %}
-        {% if contragent.emails|length == 0 %}
-        <div class="multi-field-group">
-            <input type="email" name="emails[]" class="form-input" placeholder="example@mail.com" maxlength="50">
-            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateEmailCounters()">×</button>
-        </div>
-        {% endif %}
-    </div>
-    <button type="button" class="add-field-btn" onclick="addField('emailFields', 'emails[]', 'Email', 'email', 'example@mail.com', 50, updateEmailCounters)">
-        <span>+</span> Добавить email
-    </button>
-    <div class="form-info">Максимум 50 символов для каждого email</div>
-</div>
-
-<!-- САЙТЫ -->
-<div class="multi-fields-section">
-    <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Веб-сайты:</label>
-    <div id="websiteFields">
-        {% for site in contragent.websites %}
-        <div class="multi-field-group">
-            <input type="text" name="websites[]" class="form-input" 
-                   value="{{ site.url }}" maxlength="200">
-            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateWebsiteCounters()">×</button>
-        </div>
-        {% endfor %}
-        {% if contragent.websites|length == 0 %}
-        <div class="multi-field-group">
-            <input type="text" name="websites[]" class="form-input" placeholder="example.com или любой текст" maxlength="200">
-            <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateWebsiteCounters()">×</button>
-        </div>
-        {% endif %}
-    </div>
-    <button type="button" class="add-field-btn" onclick="addField('websiteFields', 'websites[]', 'Сайт', 'text', 'example.com или любой текст', 200, updateWebsiteCounters)">
-        <span>+</span> Добавить сайт
-    </button>
-    <div class="form-info">Максимум 200 символов (можно вводить "нет сайте" или любой текст)</div>
-</div>
+            <div class="multi-fields-section">
+                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">{{ t.phones }}:</label>
+                <div id="phoneFields">
+                    {% for phone in contragent.phones %}
+                    <div class="multi-field-group">
+                        <input type="text" name="phones[]" class="form-input" 
+                               value="{{ phone.number }}" maxlength="20">
+                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updatePhoneCounters()">×</button>
+                    </div>
+                    {% endfor %}
+                    {% if contragent.phones|length == 0 %}
+                    <div class="multi-field-group">
+                        <input type="text" name="phones[]" class="form-input" placeholder="+7 (XXX) XXX-XX-XX" maxlength="20">
+                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updatePhoneCounters()">×</button>
+                    </div>
+                    {% endif %}
+                </div>
+                <button type="button" class="add-field-btn" onclick="addField('phoneFields', 'phones[]', 'phone', 'text', '+7 (XXX) XXX-XX-XX', 20, updatePhoneCounters)">
+                    <span>+</span> {{ t.add_phone }}
+                </button>
+                <div class="form-info">{{ t.max_20_chars }}</div>
+            </div>
+            
+            <!-- EMAIL -->
+            <div class="multi-fields-section">
+                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">{{ t.emails }}:</label>
+                <div id="emailFields">
+                    {% for email in contragent.emails %}
+                    <div class="multi-field-group">
+                        <input type="email" name="emails[]" class="form-input" 
+                               value="{{ email.address }}" maxlength="50">
+                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateEmailCounters()">×</button>
+                    </div>
+                    {% endfor %}
+                    {% if contragent.emails|length == 0 %}
+                    <div class="multi-field-group">
+                        <input type="email" name="emails[]" class="form-input" placeholder="example@mail.com" maxlength="50">
+                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateEmailCounters()">×</button>
+                    </div>
+                    {% endif %}
+                </div>
+                <button type="button" class="add-field-btn" onclick="addField('emailFields', 'emails[]', 'email', 'email', 'example@mail.com', 50, updateEmailCounters)">
+                    <span>+</span> {{ t.add_email }}
+                </button>
+                <div class="form-info">{{ t.max_50_chars }}</div>
+            </div>
+            
+            <!-- САЙТЫ -->
+            <div class="multi-fields-section">
+                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">{{ t.websites }}:</label>
+                <div id="websiteFields">
+                    {% for site in contragent.websites %}
+                    <div class="multi-field-group">
+                        <input type="text" name="websites[]" class="form-input" 
+                               value="{{ site.url }}" maxlength="200">
+                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateWebsiteCounters()">×</button>
+                    </div>
+                    {% endfor %}
+                    {% if contragent.websites|length == 0 %}
+                    <div class="multi-field-group">
+                        <input type="text" name="websites[]" class="form-input" placeholder="example.com или любой текст" maxlength="200">
+                        <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateWebsiteCounters()">×</button>
+                    </div>
+                    {% endif %}
+                </div>
+                <button type="button" class="add-field-btn" onclick="addField('websiteFields', 'websites[]', 'site', 'text', 'example.com или любой текст', 200, updateWebsiteCounters)">
+                    <span>+</span> {{ t.add_site }}
+                </button>
+                <div class="form-info">{{ t.max_200_chars }} {{ t.any_text_or_no_site }}</div>
+            </div>
             
             <!-- КНОПКА В ФОРМЕ -->
             <div class="form-buttons">
                 <button type="submit" class="form-button">
-                    <span>💾</span> Сохранить изменения
+                    <span>💾</span> {% if is_copy %}{{ t.create_copy }}{% else %}{{ t.save_changes }}{% endif %}
                 </button>
             </div>
         </form>
@@ -484,7 +485,7 @@
             const fields = container.querySelectorAll('input');
             
             if (fields.length >= 3) {
-                showMessage(`Максимум можно добавить 3 ${label.toLowerCase()}а`, 'danger');
+                showMessage(`Максимум можно добавить 3 ${label}а`, 'danger');
                 return;
             }
             
@@ -505,33 +506,33 @@
         }
         
         // Обработка формы
-document.getElementById('editForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    
-    fetch(window.location.pathname, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showMessage(data.message, 'success');
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 1500);
-        } else {
-            showMessage(data.message, 'danger');
-        }
-    })
-    .catch(error => {
-        showMessage('Ошибка соединения с сервером', 'danger');
-    });
-});
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch(window.location.pathname, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
+                } else {
+                    showMessage(data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                showMessage('{{ t.connection_error }}', 'danger');
+            });
+        });
         
         // Автофокус на первое поле
         document.getElementById('org_name').focus();

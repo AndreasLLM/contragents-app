@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ lang }}">
 <head>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Контрагенты</title>
+    <title>{{ t.title }}</title>
+
+
     <style>
         :root {
             --primary-color: #5dade2;
@@ -188,7 +191,6 @@
             text-align: center;
         }
         
-        /* Увеличиваем заголовок на 30% */
         h1 {
             color: #2c3e50;
             margin: 0;
@@ -205,7 +207,6 @@
             line-height: 1;
         }
         
-        /* Увеличиваем кнопку добавления в 1.5 раза и меняем текст */
         .button-add {
             display: inline-flex;
             align-items: center;
@@ -226,6 +227,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        
         
         .button-add:hover {
             background-color: var(--primary-hover);
@@ -261,7 +263,7 @@
             box-sizing: border-box;
         }
         
-        /* Авторизованный пользователь */
+        /* Авторизованный пользователь - ОБНОВЛЕННЫЙ СТИЛЬ */
         .auth-logged-in {
             display: flex;
             align-items: center;
@@ -275,18 +277,59 @@
             font-weight: 600;
         }
         
-        .auth-user-info .username {
+        .username-welcome {
             font-size: 16px;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             font-weight: 700;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
+            line-height: 1.2;
         }
         
-        .auth-user-info .welcome {
-            font-size: 14px;
-            font-weight: normal;
-            opacity: 0.9;
+        .username-welcome .username {
+            color: white;
+            font-weight: 700;
+        }
+        
+        .username-welcome .welcome-text {
+            font-weight: 500;
+        }
+        
+        /* Кнопка перехода в личный кабинет */
+        .personal-cabinet-btn {
+            background: white;
+            border: 0px solid #6c757d;
+            color: #3498db;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 5px 12px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-weight: 500;
+            height: 20px;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            max-width: 162px;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+        
+        .personal-cabinet-btn:hover {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        /* Контейнер для действий пользователя */
+        .auth-user-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
         
         /* Неавторизованный пользователь */
@@ -329,7 +372,6 @@
             flex-shrink: 0;
         }
         
-        /* Общие стили для кнопок авторизации */
         .auth-button {
             border-radius: 8px;
             padding: 8px 12px;
@@ -369,7 +411,6 @@
             border-color: #218838;
         }
         
-        /* Кнопка выхода */
         .logout-button {
             background-color: white;
             color: var(--primary-color);
@@ -439,20 +480,18 @@
             background-color: #e9ecef;
         }
         
-        /* Ширина столбцов - ОСНОВНОЙ СТИЛЬ ДЛЯ ДЕСКТОПА */
         td:nth-child(1), th:nth-child(1) { width: 18%; }
         td:nth-child(2), th:nth-child(2) { width: 11%; }
-        td:nth-child(3), th:nth-child(3) { width: 12%; } /* Уменьшил с 14% до 12% */
+        td:nth-child(3), th:nth-child(3) { width: 12%; }
         td:nth-child(4), th:nth-child(4) { width: 12%; }
         td:nth-child(5), th:nth-child(5) { width: 12%; }
         td:nth-child(6), th:nth-child(6) { width: 12%; }
         td:nth-child(7), th:nth-child(7) { width: 12%; }
         td:nth-child(8), th:nth-child(8) { 
-            width: 11%; /* Увеличил с 3% до 11% */
-            min-width: 130px; /* Увеличил чтобы помещались все кнопки */
+            width: 11%;
+            min-width: 130px;
         }
         
-        /* Для заголовков разрешаем перенос строк */
         th:nth-child(2), th:nth-child(3) {
             white-space: normal;
             line-height: 1.2;
@@ -475,7 +514,6 @@
             white-space: nowrap;
         }
         
-        /* Списки в ячейках */
         .field-list {
             list-style: none;
             padding: 0;
@@ -492,12 +530,11 @@
             word-break: break-all;
         }
         
-        /* Кнопки действий - ФИКСИРОВАННЫЙ РАЗМЕР */
         .actions-cell {
             text-align: center;
             padding: 8px 5px;
             vertical-align: middle;
-            min-width: 130px; /* Минимум чтобы поместились все 3 кнопки */
+            min-width: 130px;
         }
         
         .action-buttons {
@@ -575,12 +612,27 @@
         
         .empty {
             text-align: center;
-            padding: 20px;
+            padding: 40px 20px;
             color: #6c757d;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            margin-top: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 25px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .empty h3 {
+            color: #6C757D;
+            margin-bottom: 15px;
+            font-size: 19px;
+        }
+        
+        .empty p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 10px;
         }
         
         .clickable-link {
@@ -589,14 +641,71 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            border-bottom: 1px dotted var(--primary-color);
+            padding-bottom: 1px;
         }
         
         .clickable-link:hover {
-            text-decoration: underline;
             color: var(--primary-hover);
+            border-bottom: 1px solid var(--primary-hover);
         }
         
-        /* Мобильная версия */
+        .password-reset-link {
+            display: block;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .password-reset-link a {
+            color: #5dade2;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        
+        .password-reset-link a:hover {
+            text-decoration: underline;
+            color: #3498db;
+        }
+        
+        /* Стили для личного кабинета */
+        .info-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .info-value {
+            color: #212529;
+            text-align: right;
+            word-break: break-word;
+            max-width: 60%;
+            font-size: 14px;
+        }
+        
+        /* Мобильная версия таблицы */
         .mobile-table {
             display: none;
         }
@@ -641,7 +750,6 @@
             min-width: 0;
         }
         
-        /* Особый стиль для строки с действиями в мобильной версии */
         .mobile-row.actions-row {
             align-items: center;
             flex-direction: row;
@@ -681,38 +789,54 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 2000;
-            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
             align-items: center;
+            justify-content: center;
             padding: 20px;
         }
         
         .modal-content {
             background: white;
-            padding: 25px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 12px;
             width: 100%;
             max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: modalFadeIn 0.3s ease;
+            position: relative;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .modal-title {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             color: #2c3e50;
             text-align: center;
-            font-size: 20px;
+            font-size: 22px;
+            font-weight: 600;
+            margin-block-start: 0px;
+            margin-block-end: 14px;
         }
         
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #495057;
             font-weight: 600;
             font-size: 14px;
@@ -720,52 +844,141 @@
         
         .form-control {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
+            border-radius: 6px;
+            font-size: 15px;
             box-sizing: border-box;
+            transition: border-color 0.2s;
         }
         
         .form-control:focus {
             outline: none;
             border-color: #5dade2;
+            box-shadow: 0 0 0 3px rgba(93, 173, 226, 0.1);
         }
         
         .form-actions {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: 25px;
         }
         
         .modal-alert {
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
             display: none;
+        }
+        
+        .modal-link {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+        }
+        
+        .modal-link a {
+            color: #5dade2;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .modal-link a:hover {
+            text-decoration: underline;
+            color: #3498db;
+        }
+        
+        #resetPasswordModal .auth-button {
+            white-space: normal;
+            word-break: break-word;
+            padding: 8px 4px;
+            line-height: 1.2;
+            min-height: 40px;
+            height: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Стили для кнопок с переносом текста */
+        .modal-content .auth-button {
+            white-space: normal;
+            line-height: 1.2;
+            padding: 8px 6px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        /* Переключатель языка */
+        .language-switcher {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+            align-self: flex-start;
+        }
+        
+        .lang-btn {
+            background: #5dade2;
+            border: 1px solid #5dade2;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s;
+            min-width: 32px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        /* ИСПРАВЛЕННЫЙ СТИЛЬ: белый фон для активной кнопки языка */
+        .lang-btn.active {
+            background: #5dade2;
+            color: white;
+            border-color: white;
+            font-weight: bold;
+        }
+        
+        .lang-btn:hover {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        /* Для неавторизованных пользователей - центрирование */
+        .password-reset-link .language-switcher {
+            justify-content: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
         }
         
         /* Адаптация для проблемного диапазона 1020-1280px */
         @media (max-width: 1280px) and (min-width: 1020px) {
-            /* Увеличиваем ширину столбца действий для этого диапазона */
             td:nth-child(1), th:nth-child(1) { width: 17%; }
             td:nth-child(2), th:nth-child(2) { width: 10%; }
-            td:nth-child(3), th:nth-child(3) { width: 11%; } /* Уменьшил с 14% до 11% */
+            td:nth-child(3), th:nth-child(3) { width: 11%; }
             td:nth-child(4), th:nth-child(4) { width: 11%; }
             td:nth-child(5), th:nth-child(5) { width: 11%; }
             td:nth-child(6), th:nth-child(6) { width: 11%; }
             td:nth-child(7), th:nth-child(7) { width: 11%; }
             td:nth-child(8), th:nth-child(8) { 
-                width: 18%; /* Увеличил с 6% до 18% */
-                min-width: 140px; /* Увеличил чтобы все кнопки были видны */
+                width: 18%;
+                min-width: 140px;
             }
             
-            /* Уменьшаем отступы */
             th, td {
                 padding: 6px 8px;
             }
             
-            /* Уменьшаем шрифт */
             table {
                 font-size: 12px;
             }
@@ -788,7 +1001,6 @@
                 font-size: 11px;
             }
             
-            /* Уменьшаем верхнюю панель */
             .search-panel, .auth-panel {
                 padding: 10px 12px;
             }
@@ -813,7 +1025,7 @@
             }
         }
         
-        /* Адаптация для мобильных и планшетов - авторизация наверху */
+        /* Адаптация для мобильных и планшетов */
         @media (max-width: 1300px) {
             .top-panel {
                 grid-template-columns: 1fr;
@@ -821,7 +1033,6 @@
                 gap: 12px;
             }
             
-            /* Изменяем порядок: авторизация сверху */
             .auth-section {
                 grid-row: 1;
                 order: 1;
@@ -858,7 +1069,6 @@
                 font-size: 13px;
             }
             
-            /* Мобильная версия - уменьшаем увеличенные элементы */
             h1 {
                 font-size: 31.2px;
             }
@@ -908,14 +1118,14 @@
             
             td:nth-child(1), th:nth-child(1) { width: 22%; }
             td:nth-child(2), th:nth-child(2) { width: 10%; }
-            td:nth-child(3), th:nth-child(3) { width: 11%; } /* Уменьшил с 13% до 11% */
+            td:nth-child(3), th:nth-child(3) { width: 11%; }
             td:nth-child(4), th:nth-child(4) { width: 12%; }
             td:nth-child(5), th:nth-child(5) { width: 10%; }
             td:nth-child(6), th:nth-child(6) { width: 10%; }
             td:nth-child(7), th:nth-child(7) { width: 10%; }
             td:nth-child(8), th:nth-child(8) { 
-                width: 15%; /* Увеличил с 9% до 15% */
-                min-width: 135px; /* Увеличил чтобы все кнопки были видны */
+                width: 15%;
+                min-width: 135px;
             }
             
             .button-action {
@@ -956,6 +1166,7 @@
             }
         }
         
+        /* МОБИЛЬНАЯ ВЕРСИЯ - ВАЖНО! */
         @media (max-width: 992px) {
             .container {
                 padding: 0;
@@ -1003,15 +1214,15 @@
                 max-width: 140px;
             }
             
+            /* Показываем мобильную таблицу, скрываем десктопную */
             table {
                 display: none;
             }
             
             .mobile-table {
-                display: block;
+                display: block !important; /* Важно! */
             }
             
-            /* Кнопки на одном уровне с "Действия:" */
             .mobile-row.actions-row {
                 flex-direction: row;
                 align-items: center;
@@ -1031,6 +1242,24 @@
                 width: 36px;
                 height: 36px;
                 font-size: 16px;
+            }
+            
+            /* Для мобильных устройств делаем кнопки ещё компактнее */
+            .modal-content .auth-button {
+                font-size: 12px;
+                padding: 6px 4px;
+                min-height: 36px;
+            }
+            
+            .modal-content .form-actions {
+                gap: 8px;
+            }
+            
+            /* Мобильная версия переключателя языка */
+            .lang-btn {
+                font-size: 11px;
+                padding: 1px 6px;
+                min-width: 28px;
             }
         }
         
@@ -1102,7 +1331,7 @@
             }
             
             .modal-content {
-                padding: 20px;
+                padding: 20px 20px;
                 margin: 10px;
             }
             
@@ -1165,6 +1394,23 @@
                 height: 32px;
                 font-size: 14px;
             }
+            
+            .info-row {
+                flex-direction: column;
+                gap: 4px;
+                align-items: flex-start;
+            }
+            
+            .info-value {
+                max-width: 100%;
+                text-align: left;
+            }
+            
+            .lang-btn {
+                font-size: 10px;
+                padding: 1px 4px;
+                min-width: 26px;
+            }
         }
     </style>
 </head>
@@ -1176,37 +1422,35 @@
             <div class="search-section">
                 <div class="search-panel">
                     <div class="search-row">
-                        <span class="search-label">Искать по:</span>
+                        <span class="search-label">{{ t.search_by }}</span>
                         <select id="search_field" name="field" class="search-select">
-                            <option value="all" {% if search_field == 'all' %}selected{% endif %}>Всем параметрам</option>
-                            <option value="org_name" {% if search_field == 'org_name' %}selected{% endif %}>Наименование</option>
-                            <option value="inn" {% if search_field == 'inn' %}selected{% endif %}>ИНН</option>
-                            <option value="contact_person" {% if search_field == 'contact_person' %}selected{% endif %}>Контактное лицо</option>
-                            <option value="address" {% if search_field == 'address' %}selected{% endif %}>Адрес</option>
-                            <option value="position" {% if search_field == 'position' %}selected{% endif %}>Должность</option>
-                            <option value="phones" {% if search_field == 'phones' %}selected{% endif %}>Телефоны</option>
-                            <option value="emails" {% if search_field == 'emails' %}selected{% endif %}>Email</option>
-                            <option value="websites" {% if search_field == 'websites' %}selected{% endif %}>Сайты</option>
+                            <option value="all" {% if search_field == 'all' %}selected{% endif %}>{{ t.search_all }}</option>
+                            <option value="org_name" {% if search_field == 'org_name' %}selected{% endif %}>{{ t.search_org_name }}</option>
+                            <option value="inn" {% if search_field == 'inn' %}selected{% endif %}>{{ t.search_inn }}</option>
+                            <option value="contact_person" {% if search_field == 'contact_person' %}selected{% endif %}>{{ t.search_contact_person }}</option>
+                            <option value="address" {% if search_field == 'address' %}selected{% endif %}>{{ t.search_address }}</option>
+                            <option value="position" {% if search_field == 'position' %}selected{% endif %}>{{ t.search_position }}</option>
+                            <option value="phones" {% if search_field == 'phones' %}selected{% endif %}>{{ t.search_phones }}</option>
+                            <option value="emails" {% if search_field == 'emails' %}selected{% endif %}>{{ t.search_emails }}</option>
+                            <option value="websites" {% if search_field == 'websites' %}selected{% endif %}>{{ t.search_websites }}</option>
                         </select>
                     </div>
                     
                     <div class="search-row">
-                        <span class="search-label">Поиск:</span>
+                        <span class="search-label">{{ t.search }}:</span>
                         <div class="search-input-wrapper">
                             <input type="text" 
                                    id="search_query" 
                                    name="q" 
                                    class="search-input" 
-                                   placeholder="Введите текст..."
+                                   placeholder="{{ t.search_placeholder }}"
                                    value="{{ search_query }}">
-                            <!-- Кнопка поиска -->
-                            <button type="button" class="search-btn" onclick="performSearch()" title="Поиск">
-                                Поиск
+                            <button type="button" class="search-btn" onclick="performSearch()" title="{{ t.search_button }}">
+                                {{ t.search_button }}
                             </button>
-                            <!-- Кнопка очистки -->
                             {% if user and search_query %}
-                            <button type="button" class="search-clear-btn" onclick="clearSearch()" title="Очистить поиск">
-                                Очистить
+                            <button type="button" class="search-clear-btn" onclick="clearSearch()" title="{{ t.clear_search }}">
+                                {{ t.clear_search }}
                             </button>
                             {% endif %}
                         </div>
@@ -1216,14 +1460,14 @@
             
             <!-- Центральная часть - заголовок и кнопка -->
             <div class="center-section">
-                <h1><span class="icon-title">👔</span> Контрагенты</h1>
+                <h1><span class="icon-title">👔</span> {{ t.title }}</h1>
                 {% if user %}
                     <a href="{{ url_for('add_contragent') }}" class="button-add">
-                        <span class="big-plus">+</span> Добавить нового контрагента
+                        <span class="big-plus">+</span> {{ t.add_contragent }}
                     </a>
                 {% else %}
                     <a href="#" onclick="showLoginModal(); return false;" class="button-add">
-                        <span class="big-plus">+</span> Добавить нового контрагента
+                        <span class="big-plus">+</span> {{ t.add_contragent }}
                     </a>
                 {% endif %}
             </div>
@@ -1232,42 +1476,54 @@
             <div class="auth-section">
                 <div class="auth-panel">
                     {% if user %}
-                        <!-- Если пользователь авторизован -->
                         <div class="auth-logged-in">
                             <div class="auth-user-info">
-                                <div class="username">{{ user.username }}</div>
-                                <div class="welcome">Добро пожаловать!</div>
+                                <div class="username-welcome">
+                                    <span class="username">{{ user.username }}</span>, {{ t.welcome_back }}
+                                </div>
+                                <div class="auth-user-actions">
+                                    <button class="personal-cabinet-btn" onclick="showPersonalCabinetModal()">
+                                        {{ t.go_to_cabinet }}
+                                    </button>
+                                    
+                                    <!-- Переключатель языка для авторизованных пользователей -->
+                                    <div class="language-switcher">
+                                        <button class="lang-btn {% if lang == 'ru' %}active{% endif %}" 
+                                                onclick="setLanguage('ru')" title="{{ t.language_ru }}">RU</button>
+                                        <button class="lang-btn {% if lang == 'en' %}active{% endif %}" 
+                                                onclick="setLanguage('en')" title="{{ t.language_en }}">EN</button>
+                                    </div>
+                                </div>
                             </div>
                             <a href="{{ url_for('logout') }}" class="logout-button">
-                                Выйти
+                                {{ t.logout }}
                             </a>
                         </div>
                     {% else %}
-                        <!-- Если пользователь не авторизован -->
                         <div class="auth-login-form">
                             <div class="auth-login-fields">
                                 <input type="text" 
                                        id="topLoginUsername" 
                                        class="auth-login-input" 
-                                       placeholder="Логин">
+                                       placeholder="{{ t.enter_login }}">
                                 <input type="password" 
                                        id="topLoginPassword" 
                                        class="auth-login-input" 
-                                       placeholder="Пароль">
+                                       placeholder="{{ t.enter_password }}">
                             </div>
                             <div class="auth-buttons-column">
                                 <button onclick="showRegisterModal()" class="auth-button auth-register-button">
-                                    Регистрация
+                                    {{ t.register }}
                                 </button>
                                 <button onclick="loginFromTopPanel()" class="auth-button auth-login-button">
-                                    Войти
+                                    {{ t.login }}
                                 </button>
                             </div>
                             <div class="auth-buttons-compact" style="display: none;">
                                 <button onclick="showRegisterModal()" class="auth-button auth-register-button">
-                                    Регистрация
+                                    {{ t.register }}
                                 </button>
-                                <button onclick="showLoginModal()" class="auth-button auth-login-button">Войти</button>
+                                <button onclick="showLoginModal()" class="auth-button auth-login-button">{{ t.login }}</button>
                             </div>
                         </div>
                     {% endif %}
@@ -1278,81 +1534,21 @@
         <!-- Всплывающие сообщения -->
         <div id="message-container"></div>
         
-        <!-- Модальное окно входа -->
-        <div id="loginModal" class="modal">
-            <div class="modal-content">
-                <h3 class="modal-title">Вход в систему</h3>
-                <div id="loginMessage" class="modal-alert" style="display: none;"></div>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="loginUsername">Имя пользователя:</label>
-                        <input type="text" id="loginUsername" name="username" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Пароль:</label>
-                        <input type="password" id="loginPassword" name="password" class="form-control" required>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="auth-button auth-login-button" style="width: 100%;">Войти</button>
-                        <button type="button" onclick="hideLoginModal()" class="auth-button auth-login-button" style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
-                            Отмена
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Модальное окно регистрации -->
-        <div id="registerModal" class="modal">
-            <div class="modal-content">
-                <h3 class="modal-title">Регистрация</h3>
-                <div id="registerMessage" class="modal-alert" style="display: none;"></div>
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label for="registerUsername">Имя пользователя:</label>
-                        <input type="text" id="registerUsername" name="username" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerEmail">Email (необязательно):</label>
-                        <input type="email" id="registerEmail" name="email" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword">Пароль:</label>
-                        <input type="password" id="registerPassword" name="password" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerConfirmPassword">Подтвердите пароль:</label>
-                        <input type="password" id="registerConfirmPassword" name="confirm_password" class="form-control" required>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="auth-button auth-register-button" style="width: 100%;">
-                            Зарегистрироваться
-                        </button>
-                        <button type="button" onclick="hideRegisterModal()" class="auth-button auth-login-button" style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
-                            Отмена
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
         <!-- Основной контент -->
         {% if user %}
-            <!-- Пользователь авторизован -->
             {% if contragents %}
-                <!-- Есть контрагенты - показываем таблицы -->
                 <!-- Таблица для десктопов -->
                 <table>
                     <thead>
                         <tr>
-                            <th>Организация, ИНН</th>
-                            <th>Контактное лицо</th>
-                            <th>Должность</th>
-                            <th>Адрес</th>
-                            <th>Телефоны</th>
-                            <th>Email</th>
-                            <th>Сайты</th>
-                            <th>Действия</th>
+                            <th>{{ t.organization }}</th>
+                            <th>{{ t.contact_person }}</th>
+                            <th>{{ t.position }}</th>
+                            <th>{{ t.address }}</th>
+                            <th>{{ t.phones }}</th>
+                            <th>{{ t.emails }}</th>
+                            <th>{{ t.websites }}</th>
+                            <th>{{ t.actions }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1361,7 +1557,7 @@
                             <td>
                                 <div class="org-name">{{ contragent.org_name }}</div>
                                 {% if contragent.inn %}
-                                <div class="org-inn">ИНН: {{ contragent.inn }}</div>
+                                <div class="org-inn">{{ t.inn }}: {{ contragent.inn }}</div>
                                 {% endif %}
                             </td>
                             <td>{{ contragent.contact_person or '' }}</td>
@@ -1390,9 +1586,9 @@
                             </td>
                             <td class="actions-cell">
                                 <div class="action-buttons">
-                                    <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
-                                    <a href="{{ url_for('add_contragent') }}?copy_id={{ contragent.id }}" class="button-action button-copy" title="Копировать">⧉</a>
-                                    <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
+                                    <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="{{ t.edit }}">✏️</a>
+                                    <a href="{{ url_for('add_contragent') }}?copy_id={{ contragent.id }}" class="button-action button-copy" title="{{ t.copy_verb }}">⧉</a>
+                                    <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="{{ t.delete }}">🗑️</button>
                                 </div>
                             </td>
                         </tr>
@@ -1405,36 +1601,36 @@
                     {% for contragent in contragents %}
                     <div class="mobile-card">
                         <div class="mobile-row">
-                            <div class="mobile-label">Организация:</div>
+                            <div class="mobile-label">{{ t.org_name }}:</div>
                             <div class="mobile-value">{{ contragent.org_name }}</div>
                         </div>
                         {% if contragent.inn %}
                         <div class="mobile-row">
-                            <div class="mobile-label">ИНН:</div>
+                            <div class="mobile-label">{{ t.inn }}:</div>
                             <div class="mobile-value">{{ contragent.inn }}</div>
                         </div>
                         {% endif %}
                         {% if contragent.contact_person %}
                         <div class="mobile-row">
-                            <div class="mobile-label">Контактное лицо:</div>
+                            <div class="mobile-label">{{ t.contact_person }}:</div>
                             <div class="mobile-value">{{ contragent.contact_person }}</div>
                         </div>
                         {% endif %}
                         {% if contragent.position %}
                         <div class="mobile-row">
-                            <div class="mobile-label">Должность:</div>
+                            <div class="mobile-label">{{ t.position }}:</div>
                             <div class="mobile-value">{{ contragent.position }}</div>
                         </div>
                         {% endif %}
                         {% if contragent.address %}
                         <div class="mobile-row">
-                            <div class="mobile-label">Адрес:</div>
+                            <div class="mobile-label">{{ t.address }}:</div>
                             <div class="mobile-value">{{ contragent.address }}</div>
                         </div>
                         {% endif %}
                         {% if contragent.phones %}
                         <div class="mobile-row">
-                            <div class="mobile-label">Телефоны:</div>
+                            <div class="mobile-label">{{ t.phones }}:</div>
                             <div class="mobile-value">
                                 <ul class="mobile-contacts">
                                     {% for phone in contragent.phones[:3] %}
@@ -1446,7 +1642,7 @@
                         {% endif %}
                         {% if contragent.emails %}
                         <div class="mobile-row">
-                            <div class="mobile-label">Email:</div>
+                            <div class="mobile-label">{{ t.emails }}:</div>
                             <div class="mobile-value">
                                 <ul class="mobile-contacts">
                                     {% for email in contragent.emails[:3] %}
@@ -1458,7 +1654,7 @@
                         {% endif %}
                         {% if contragent.websites %}
                         <div class="mobile-row">
-                            <div class="mobile-label">Сайты:</div>
+                            <div class="mobile-label">{{ t.websites }}:</div>
                             <div class="mobile-value">
                                 <ul class="mobile-contacts">
                                     {% for site in contragent.websites[:3] %}
@@ -1469,12 +1665,12 @@
                         </div>
                         {% endif %}
                         <div class="mobile-row actions-row">
-                            <div class="mobile-label">Действия:</div>
+                            <div class="mobile-label">{{ t.actions }}:</div>
                             <div class="mobile-value">
                                 <div class="action-buttons" style="justify-content: flex-end;">
-                                    <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="Редактировать">✏️</a>
-                                    <a href="{{ url_for('add_contragent') }}?copy_id={{ contragent.id }}" class="button-action button-copy" title="Копировать">⧉</a>
-                                    <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="Удалить">🗑️</button>
+                                    <a href="{{ url_for('edit_contragent', id=contragent.id) }}" class="button-action button-edit" title="{{ t.edit }}">✏️</a>
+                                    <a href="{{ url_for('add_contragent') }}?copy_id={{ contragent.id }}" class="button-action button-copy" title="{{ t.copy_verb }}">⧉</a>
+                                    <button type="button" class="button-action button-delete" onclick="deleteContragent({{ contragent.id }}, '{{ contragent.org_name }}')" title="{{ t.delete }}">🗑️</button>
                                 </div>
                             </div>
                         </div>
@@ -1482,26 +1678,216 @@
                     {% endfor %}
                 </div>
             {% else %}
-                <!-- Пользователь авторизован, но контрагентов нет -->
                 <div class="empty">
-                    <h3>Контрагентов не найдено</h3>
-                    <p>Измените параметры поиска или добавьте контрагента</p>
+                    <h3>{{ t.no_contragents }}</h3>
+                    <p>{{ t.change_search }}</p>
                 </div>
             {% endif %}
         {% else %}
             <!-- Пользователь не авторизован -->
             <div class="empty">
-                <h3>Добро пожаловать в систему "Контрагенты"!</h3>
-                <p>Для работы с контрагентами необходимо 
-                    <span onclick="showLoginModal()" class="clickable-link">войти</span> 
-                    или 
-                    <span onclick="showRegisterModal()" class="clickable-link">зарегистрироваться</span>
+                <h3>{{ t.welcome_to_system }}</h3>
+                <p>{{ t.need_auth }} 
+                    <span onclick="showLoginModal()" class="clickable-link">{{ t.need_auth_login }}</span> 
+                    {{ t.need_auth_or }} 
+                    <span onclick="showRegisterModal()" class="clickable-link">{{ t.need_auth_register }}</span>
                 </p>
+                <div class="password-reset-link">
+                    <span>{{ t.forgot_password }}</span>
+                    <a href="#" onclick="showResetPasswordModal(); return false;">{{ t.restore_access }}</a>
+                    
+                    <!-- Переключатель языка для неавторизованных пользователей -->
+                    <div class="language-switcher">
+                        <button class="lang-btn {% if lang == 'ru' %}active{% endif %}" 
+                                onclick="setLanguage('ru')" title="{{ t.language_ru }}">RU</button>
+                        <button class="lang-btn {% if lang == 'en' %}active{% endif %}" 
+                                onclick="setLanguage('en')" title="{{ t.language_en }}">EN</button>
+                    </div>
+                </div>
             </div>
         {% endif %}
     </div>
     
+    <!-- Модальные окна перенесены в конец body для правильной работы -->
+    <!-- Модальное окно входа -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">{{ t.login_title }}</h3>
+            <div id="loginMessage" class="modal-alert" style="display: none;"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">{{ t.username }}:</label>
+                    <input type="text" id="loginUsername" name="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">{{ t.password }}:</label>
+                    <input type="password" id="loginPassword" name="password" class="form-control" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="auth-button auth-login-button" style="width: 100%;">{{ t.login }}</button>
+                    <button type="button" onclick="hideLoginModal()" class="auth-button auth-login-button" style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
+                        {{ t.to_main }}<br>
+                    </button>
+                </div>
+            </form>
+            <div class="modal-link">
+                <a href="#" onclick="showResetPasswordModal(); return false;">
+                    {{ t.forgot_password_q }}
+                </a>
+            </div>
+            <div class="modal-link">
+                {{ t.no_account }} <a href="#" onclick="showRegisterModal(); return false;">{{ t.register_here }}</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно регистрации -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">{{ t.registration }}</h3>
+            <div id="registerMessage" class="modal-alert" style="display: none;"></div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerUsername">{{ t.username }}:</label>
+                    <input type="text" id="registerUsername" name="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">{{ t.email_optional }}:</label>
+                    <input type="email" id="registerEmail" name="email" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">{{ t.password }}:</label>
+                    <input type="password" id="registerPassword" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">{{ t.confirm_password }}:</label>
+                    <input type="password" id="registerConfirmPassword" name="confirm_password" class="form-control" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="auth-button auth-register-button" style="width: 100%;">
+                        {{ t.register_here }}
+                    </button>
+                    <button type="button" onclick="hideRegisterModal()" class="auth-button auth-login-button" style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
+                        {{ t.to_main }}<br>
+                    </button>
+                </div>
+            </form>
+            <div class="modal-link">
+                {{ t.already_have_account }} <a href="#" onclick="showLoginModal(); return false;">{{ t.login_here }}</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно восстановления пароля -->
+    <div id="resetPasswordModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">{{ t.password_recovery }}</h3>
+            <div id="resetPasswordMessage" class="modal-alert" style="display: none;"></div>
+            <form id="resetPasswordForm">
+                <div class="form-group">
+                    <label for="resetPasswordEmail">{{ t.enter_email }}:</label>
+                    <input type="email" id="resetPasswordEmail" name="email" class="form-control" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="auth-button auth-login-button" style="width: 100%;">
+                        {{ t.send_recovery_link }}<br>
+                    </button>
+                    <button type="button" onclick="hideResetPasswordModal()" class="auth-button auth-login-button" style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
+                        {{ t.to_main }}<br>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Модальное окно личного кабинета -->
+    <div id="personalCabinetModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">{{ t.personal_cabinet }}</h3>
+            <div id="personalCabinetMessage" class="modal-alert" style="display: none;"></div>
+            
+            <div class="info-section">
+                <div class="info-row">
+                    <span class="info-label">{{ t.username }}:</span>
+                    <span class="info-value" id="pcUsername">{{ user.username }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value" id="pcEmail">{{ user.email or t.not_specified }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">{{ t.contragents_count }}:</span>
+                    <span class="info-value">{{ contragents|length if contragents else 0 }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">{{ t.registration_date }}:</span>
+                    <span class="info-value">{{ user.created_at.strftime('%d.%m.%Y') if user.created_at else t.unknown }}</span>
+                </div>
+            </div>
+            
+            <!-- Форма изменения email -->
+            <form id="changeEmailForm">
+                <h4 style="margin-bottom: 15px; color: #2c3e50;">{{ t.change_email }}</h4>
+                <div class="form-group">
+                    <label for="newEmail">{{ t.new_email }}:</label>
+                    <input type="email" id="newEmail" name="email" class="form-control" 
+                           value="{{ user.email or '' }}" placeholder="{{ t.enter_email }}">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="auth-button auth-login-button" style="width: 100%;">
+                        {{ t.save_email }}<br>
+                    </button>
+                    <button type="button" onclick="hidePersonalCabinetModal()" class="auth-button auth-login-button" 
+                            style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
+                        {{ t.to_main }}<br>
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Форма изменения пароля -->
+            <form id="changePasswordForm" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; display: none;">
+                <h4 style="margin-bottom: 15px; color: #2c3e50;">{{ t.change_password }}</h4>
+                <div class="form-group">
+                    <label for="currentPassword">{{ t.current_password }}:</label>
+                    <input type="password" id="currentPassword" name="current_password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">{{ t.new_password }}:</label>
+                    <input type="password" id="newPassword" name="new_password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmNewPassword">{{ t.confirm_new_password }}:</label>
+                    <input type="password" id="confirmNewPassword" name="confirm_new_password" class="form-control" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="auth-button auth-login-button" style="width: 100%;">
+                        {{ t.change_password_btn }}<br>
+                    </button>
+                    <button type="button" onclick="showChangeEmailForm()" class="auth-button auth-login-button" 
+                            style="width: 100%; background-color: #6c757d; border-color: #6c757d; color: white;">
+                        {{ t.back }}
+                    </button>
+                </div>
+            </form>
+            
+            <div class="modal-link" id="changePasswordLink">
+                <a href="#" onclick="showChangePasswordForm(); return false;">{{ t.change_password }}</a>
+            </div>
+        </div>
+    </div>
+    
     <script>
+        // Функция для смены языка
+        function setLanguage(lang) {
+            fetch('/set_language/' + lang)
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error changing language:', error));
+        }
+
         // Функция показа сообщения
         function showMessage(message, type = 'success') {
             const container = document.getElementById('message-container');
@@ -1529,12 +1915,12 @@
             const searchInput = document.getElementById('search_query');
             const searchBtn = document.querySelector('.search-btn');
             const clearBtn = document.querySelector('.search-clear-btn');
-            const user = {{ 'true' if user else 'false' }};
+            const userElement = document.querySelector('.auth-logged-in');
+            const isLoggedIn = userElement !== null;
             const hasSearchQuery = searchInput.value.trim() !== '';
-            const hasExistingQuery = "{{ search_query }}" !== '';
             
             if (searchBtn) {
-                if (user && hasSearchQuery) {
+                if (isLoggedIn && hasSearchQuery) {
                     searchBtn.style.display = 'block';
                 } else {
                     searchBtn.style.display = 'none';
@@ -1542,7 +1928,7 @@
             }
             
             if (clearBtn) {
-                if (user && hasExistingQuery) {
+                if (isLoggedIn && hasSearchQuery) {
                     clearBtn.style.display = 'block';
                 } else {
                     clearBtn.style.display = 'none';
@@ -1560,9 +1946,10 @@
             updateSearchButtons();
             
             const searchInput = document.getElementById('search_query');
-            if (searchInput && searchInput.value.trim() !== '' && {{ 'true' if user else 'false' }}) {
+            if (searchInput && searchInput.value.trim() !== '') {
                 const searchBtn = document.querySelector('.search-btn');
-                if (searchBtn) {
+                const userElement = document.querySelector('.auth-logged-in');
+                if (searchBtn && userElement) {
                     searchBtn.style.display = 'block';
                 }
             }
@@ -1609,31 +1996,88 @@
         
         // Функции для модальных окон
         function showLoginModal() {
+            hideRegisterModal();
+            hideResetPasswordModal();
+            hidePersonalCabinetModal();
             document.getElementById('loginModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
             document.getElementById('loginMessage').style.display = 'none';
         }
         
         function hideLoginModal() {
             document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('loginMessage').style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
         
         function showRegisterModal() {
+            hideLoginModal();
+            hideResetPasswordModal();
+            hidePersonalCabinetModal();
             document.getElementById('registerModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
             document.getElementById('registerMessage').style.display = 'none';
         }
         
         function hideRegisterModal() {
             document.getElementById('registerModal').style.display = 'none';
-            document.getElementById('registerMessage').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        function showResetPasswordModal() {
+            hideLoginModal();
+            hideRegisterModal();
+            hidePersonalCabinetModal();
+            document.getElementById('resetPasswordModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            document.getElementById('resetPasswordMessage').style.display = 'none';
+        }
+        
+        function hideResetPasswordModal() {
+            document.getElementById('resetPasswordModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Личный кабинет
+        function showPersonalCabinetModal() {
+            hideLoginModal();
+            hideRegisterModal();
+            hideResetPasswordModal();
+            document.getElementById('personalCabinetModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            document.getElementById('personalCabinetMessage').style.display = 'none';
+            document.getElementById('changeEmailForm').style.display = 'block';
+            document.getElementById('changePasswordForm').style.display = 'none';
+            document.getElementById('changePasswordLink').style.display = 'block';
+        }
+        
+        function hidePersonalCabinetModal() {
+            document.getElementById('personalCabinetModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        function showChangePasswordForm() {
+            document.getElementById('changeEmailForm').style.display = 'none';
+            document.getElementById('changePasswordForm').style.display = 'block';
+            document.getElementById('changePasswordLink').style.display = 'none';
+        }
+        
+        function showChangeEmailForm() {
+            document.getElementById('changeEmailForm').style.display = 'block';
+            document.getElementById('changePasswordForm').style.display = 'none';
+            document.getElementById('changePasswordLink').style.display = 'block';
         }
         
         // Закрытие модальных окон при клике вне их
         window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                hideLoginModal();
-                hideRegisterModal();
-            }
+            const loginModal = document.getElementById('loginModal');
+            const registerModal = document.getElementById('registerModal');
+            const resetPasswordModal = document.getElementById('resetPasswordModal');
+            const personalCabinetModal = document.getElementById('personalCabinetModal');
+            
+            if (event.target === loginModal) hideLoginModal();
+            if (event.target === registerModal) hideRegisterModal();
+            if (event.target === resetPasswordModal) hideResetPasswordModal();
+            if (event.target === personalCabinetModal) hidePersonalCabinetModal();
         }
         
         // AJAX вход из верхней панели
@@ -1648,9 +2092,7 @@
             
             fetch('/api/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ username, password })
             })
             .then(response => response.json())
@@ -1662,16 +2104,12 @@
                     showMessage(data.message, 'danger');
                 }
             })
-            .catch(error => {
-                showMessage('Ошибка соединения с сервером', 'danger');
-            });
+            .catch(error => showMessage('Ошибка соединения с сервером', 'danger'));
         }
         
         // Обработка нажатия Enter в полях ввода верхней панели
         document.getElementById('topLoginPassword')?.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                loginFromTopPanel();
-            }
+            if (e.key === 'Enter') loginFromTopPanel();
         });
         
         // AJAX вход из модального окна
@@ -1683,9 +2121,7 @@
             
             fetch('/api/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ username, password })
             })
             .then(response => response.json())
@@ -1696,7 +2132,7 @@
                 messageDiv.style.display = 'block';
                 
                 if (data.success) {
-                    location.reload();
+                    setTimeout(() => location.reload(), 1000);
                 }
             })
             .catch(error => {
@@ -1718,7 +2154,7 @@
             
             if (password !== confirmPassword) {
                 const messageDiv = document.getElementById('registerMessage');
-                messageDiv.textContent = 'Пароли не совпадают';
+                messageDiv.textContent = '{{ t.passwords_not_match }}';
                 messageDiv.className = 'modal-alert alert-danger';
                 messageDiv.style.display = 'block';
                 return;
@@ -1726,9 +2162,7 @@
             
             fetch('/api/register', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ username, email, password })
             })
             .then(response => response.json())
@@ -1739,14 +2173,128 @@
                 messageDiv.style.display = 'block';
                 
                 if (data.success) {
-                    hideRegisterModal();
-                    showLoginModal();
-                    document.getElementById('loginUsername').value = username;
-                    document.getElementById('loginPassword').value = '';
+                    setTimeout(() => {
+                        hideRegisterModal();
+                        showLoginModal();
+                        document.getElementById('loginUsername').value = username;
+                        document.getElementById('loginPassword').value = '';
+                    }, 1500);
                 }
             })
             .catch(error => {
                 const messageDiv = document.getElementById('registerMessage');
+                messageDiv.textContent = 'Ошибка соединения с сервером';
+                messageDiv.className = 'modal-alert alert-danger';
+                messageDiv.style.display = 'block';
+            });
+        });
+        
+        // AJAX восстановление пароля
+        document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('resetPasswordEmail').value;
+            
+            fetch('/reset_password_request', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('resetPasswordMessage');
+                messageDiv.textContent = data.message;
+                messageDiv.className = `modal-alert alert-${data.success ? 'success' : 'danger'}`;
+                messageDiv.style.display = 'block';
+                
+                if (data.success) {
+                    setTimeout(() => {
+                        hideResetPasswordModal();
+                        showLoginModal();
+                    }, 2000);
+                }
+            })
+            .catch(error => {
+                const messageDiv = document.getElementById('resetPasswordMessage');
+                messageDiv.textContent = 'Ошибка соединения с сервером';
+                messageDiv.className = 'modal-alert alert-danger';
+                messageDiv.style.display = 'block';
+            });
+        });
+        
+        // AJAX изменение email
+        document.getElementById('changeEmailForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newEmail = document.getElementById('newEmail').value;
+            
+            fetch('/api/change-email', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: newEmail })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('personalCabinetMessage');
+                messageDiv.textContent = data.message;
+                messageDiv.className = `modal-alert alert-${data.success ? 'success' : 'danger'}`;
+                messageDiv.style.display = 'block';
+                
+                if (data.success) {
+                    document.getElementById('pcEmail').textContent = newEmail || '{{ t.not_specified }}';
+                }
+            })
+            .catch(error => {
+                const messageDiv = document.getElementById('personalCabinetMessage');
+                messageDiv.textContent = 'Ошибка соединения с сервером';
+                messageDiv.className = 'modal-alert alert-danger';
+                messageDiv.style.display = 'block';
+            });
+        });
+        
+        // AJAX изменение пароля
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            
+            if (newPassword !== confirmNewPassword) {
+                const messageDiv = document.getElementById('personalCabinetMessage');
+                messageDiv.textContent = '{{ t.passwords_not_match }}';
+                messageDiv.className = 'modal-alert alert-danger';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            fetch('/api/change-password', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ 
+                    current_password: currentPassword,
+                    new_password: newPassword 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('personalCabinetMessage');
+                messageDiv.textContent = data.message;
+                messageDiv.className = `modal-alert alert-${data.success ? 'success' : 'danger'}`;
+                messageDiv.style.display = 'block';
+                
+                if (data.success) {
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmNewPassword').value = '';
+                    
+                    setTimeout(() => {
+                        hidePersonalCabinetModal();
+                    }, 1500);
+                }
+            })
+            .catch(error => {
+                const messageDiv = document.getElementById('personalCabinetMessage');
                 messageDiv.textContent = 'Ошибка соединения с сервером';
                 messageDiv.className = 'modal-alert alert-danger';
                 messageDiv.style.display = 'block';
@@ -1771,6 +2319,16 @@
         }
         
         window.addEventListener('resize', checkScreenSize);
+        
+        // Закрытие модальных окон по клавише ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideLoginModal();
+                hideRegisterModal();
+                hideResetPasswordModal();
+                hidePersonalCabinetModal();
+            }
+        });
         
         // Flash сообщения
         {% with messages = get_flashed_messages(with_categories=true) %}

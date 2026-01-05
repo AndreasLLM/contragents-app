@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ lang }}">
 <head>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if is_copy %}Копировать контрагента{% else %}Добавить контрагента{% endif %}</title>
+    <title>{% if is_copy %}{{ t['copy'] }}{% else %}{{ t.add_contragent }}{% endif %}</title>
     <style>
         :root {
             --primary-color: #5dade2;
@@ -268,11 +269,11 @@
     <!-- ЗАГОЛОВОК С КНОПКОЙ -->
     <div class="header-container">
         <div>
-            <h1>{% if is_copy %}📋 Копировать контрагента{% else %}👔 Добавить контрагента{% endif %}</h1>
-            <a href="{{ url_for('index') }}" class="back-button">← Назад</a>
+            <h1>{% if is_copy %}📋 {{ t['copy'] }}{% else %}👔 {{ t.add_contragent }}{% endif %}</h1>
+            <a href="{{ url_for('index') }}" class="back-button">← {{ t.back }}</a>
         </div>
         <button type="submit" form="addForm" class="header-button">
-            <span>💾</span> {% if is_copy %}Создать копию{% else %}Добавить контрагента{% endif %}
+            <span>💾</span> {% if is_copy %}{{ t.create_copy }}{% else %}{{ t.add_contragent }}{% endif %}
         </button>
     </div>
     
@@ -283,14 +284,14 @@
             <!-- ОСНОВНЫЕ ПОЛЯ -->
             <div class="form-row">
                 <div class="form-group">
-                    <label for="org_name" class="required">Наименование организации:</label>
+                    <label for="org_name" class="required">{{ t.org_name }}:</label>
                     <input type="text" id="org_name" name="org_name" class="form-input" 
                            value="{{ contragent.org_name if contragent else '' }}" required maxlength="50">
                     <div class="char-counter" id="org_name_counter">{{ (contragent.org_name|length if contragent else 0) }}/50</div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="inn">ИНН:</label>
+                    <label for="inn">{{ t.inn }}:</label>
                     <input type="text" id="inn" name="inn" class="form-input" 
        value="{{ contragent.inn if contragent and contragent.inn is not none else '' }}" maxlength="20">
                     <div class="char-counter" id="inn_counter">{{ (contragent.inn|length if contragent and contragent.inn is not none else 0) }}/20</div>
@@ -299,14 +300,14 @@
             
             <div class="form-row">
                 <div class="form-group">
-                    <label for="contact_person">Контактное лицо:</label>
+                    <label for="contact_person">{{ t.contact_person }}:</label>
                     <input type="text" id="contact_person" name="contact_person" class="form-input" 
        value="{{ contragent.contact_person if contragent and contragent.contact_person is not none else '' }}" maxlength="50">
                     <div class="char-counter" id="contact_person_counter">{{ (contragent.contact_person|length if contragent and contragent.contact_person is not none else 0) }}/50</div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="position">Должность:</label>
+                    <label for="position">{{ t.position }}:</label>
                     <input type="text" id="position" name="position" class="form-input" 
        value="{{ contragent.position if contragent and contragent.position is not none else '' }}" maxlength="50">
                     <div class="char-counter" id="position_counter">{{ (contragent.position|length if contragent and contragent.position is not none else 0) }}/50</div>
@@ -314,7 +315,7 @@
             </div>
             
             <div class="form-group">
-                <label for="address">Адрес:</label>
+                <label for="address">{{ t.address }}:</label>
                 <input type="text" id="address" name="address" class="form-input" 
        value="{{ contragent.address if contragent and contragent.address is not none else '' }}" maxlength="50">
                 <div class="char-counter" id="address_counter">{{ (contragent.address|length if contragent and contragent.address is not none else 0) }}/50</div>
@@ -322,7 +323,7 @@
             
             <!-- ТЕЛЕФОНЫ -->
             <div class="multi-fields-section">
-                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Телефоны:</label>
+                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">{{ t.phones }}:</label>
                 <div id="phoneFields">
                     {% if contragent and contragent.phones %}
                         {% for phone in contragent.phones %}
@@ -339,15 +340,15 @@
                         </div>
                     {% endif %}
                 </div>
-                <button type="button" class="add-field-btn" onclick="addField('phoneFields', 'phones[]', 'Телефон', 'text', '+7 (XXX) XXX-XX-XX', 20, updatePhoneCounters)">
-                    <span>+</span> Добавить телефон
+                <button type="button" class="add-field-btn" onclick="addField('phoneFields', 'phones[]', '{{ t.phones }}', 'text', '+7 (XXX) XXX-XX-XX', 20, updatePhoneCounters)">
+                    <span>+</span> {{ t.add }} {{ t.phones }}
                 </button>
-                <div class="form-info">Максимум 20 символов для каждого телефона</div>
+                <div class="form-info">{{ t.max_20_chars }}</div>
             </div>
             
             <!-- EMAIL -->
             <div class="multi-fields-section">
-                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Email адреса:</label>
+                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">{{ t.emails }}:</label>
                 <div id="emailFields">
                     {% if contragent and contragent.emails %}
                         {% for email in contragent.emails %}
@@ -364,15 +365,15 @@
                         </div>
                     {% endif %}
                 </div>
-                <button type="button" class="add-field-btn" onclick="addField('emailFields', 'emails[]', 'Email', 'email', 'example@mail.com', 50, updateEmailCounters)">
-                    <span>+</span> Добавить email
+                <button type="button" class="add-field-btn" onclick="addField('emailFields', 'emails[]', '{{ t.emails }}', 'email', 'example@mail.com', 50, updateEmailCounters)">
+                    <span>+</span> {{ t.add }} {{ t.emails }}
                 </button>
-                <div class="form-info">Максимум 50 символов для каждого email</div>
+                <div class="form-info">{{ t.max_50_chars }}</div>
             </div>
             
             <!-- САЙТЫ -->
             <div class="multi-fields-section">
-                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">Веб-сайты:</label>
+                <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057;">{{ t.websites }}:</label>
                 <div id="websiteFields">
                     {% if contragent and contragent.websites %}
                         {% for site in contragent.websites %}
@@ -384,21 +385,21 @@
                         {% endfor %}
                     {% else %}
                         <div class="multi-field-group">
-                            <input type="text" name="websites[]" class="form-input" placeholder="example.com или любой текст" maxlength="200">
+                            <input type="text" name="websites[]" class="form-input" placeholder="example.com" maxlength="200">
                             <button type="button" class="remove-field-btn" onclick="this.parentElement.remove(); updateWebsiteCounters()">×</button>
                         </div>
                     {% endif %}
                 </div>
-                <button type="button" class="add-field-btn" onclick="addField('websiteFields', 'websites[]', 'Сайт', 'text', 'example.com или любой текст', 200, updateWebsiteCounters)">
-                    <span>+</span> Добавить сайт
+                <button type="button" class="add-field-btn" onclick="addField('websiteFields', 'websites[]', '{{ t.websites }}', 'text', 'example.com', 200, updateWebsiteCounters)">
+                    <span>+</span> {{ t.add }} {{ t.websites }}
                 </button>
-                <div class="form-info">Максимум 200 символов (можно вводить "нет сайте" или любой текст)</div>
+                <div class="form-info">{{ t.max_200_chars }} {{ t.any_text_or_no_site }}</div>
             </div>
             
             <!-- КНОПКА В ФОРМЕ -->
             <div class="form-buttons">
                 <button type="submit" class="form-button">
-                    <span>💾</span> {% if is_copy %}Создать копию{% else %}Добавить контрагента{% endif %}
+                    <span>💾</span> {% if is_copy %}{{ t.create_copy }}{% else %}{{ t.add_contragent }}{% endif %}
                 </button>
             </div>
         </form>
