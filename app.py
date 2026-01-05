@@ -10,51 +10,60 @@ from dotenv import load_dotenv
 from sqlalchemy.pool import NullPool
 from urllib.parse import urlparse
 
+# Загружаем переменные окружения
 load_dotenv()
-IS_LOCAL_DEV = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-ключ')
 
-# 🔧 ИСПРАВЛЕННАЯ НАСТРОЙКА СЕССИИ
+# Создаем приложение Flask
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ваш-очень-длинный-секретный-ключ-измените-это')
+
+# Настройки сессии
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 app.config['SESSION_REFRESH_EACH_REQUEST'] = True
 
-# --- НАСТРОЙКА БАЗЫ ДАННЫХ (ТОЛЬКО POSTGRESQL) ---
+# ========== НАСТРОЙКА БАЗЫ ДАННЫХ (ТОЛЬКО POSTGRESQL) ==========
 database_url = os.environ.get('DATABASE_URL')
 
 if not database_url:
+    # Критическая ошибка - нет DATABASE_URL
     print("❌ ОШИБКА: DATABASE_URL не установлен!")
-    print("✅ Настройте DATABASE_URL в Render Dashboard")
-    print("✅ Или добавьте в .env файл для локальной разработки")
+    print("✅ Для локальной разработки добавьте DATABASE_URL в .env файл")
+    print("✅ На Render DATABASE_URL добавляется автоматически при создании PostgreSQL")
     exit(1)
 
-if IS_LOCAL_DEV:
-    print("⚠️  РЕЖИМ ЛОКАЛЬНОЙ РАЗРАБОТКИ")
-    print(f"📦 DATABASE_URL из .env: {database_url[:50]}...")
-
+# Преобразование URL для PostgreSQL (если требуется)
 if database_url.startswith('postgres://'):
     database_url = database_url.replace('postgres://', 'postgresql+psycopg://', 1)
 elif database_url.startswith('postgresql://'):
     database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
 
-is_render = 'onrender.com' in database_url or 'RENDER' in os.environ
+print(f"📦 Подключаемся к базе данных PostgreSQL...")
 
+# Определяем, на Render ли мы
+is_render = 'onrender.com' in database_url or 'RENDER' in os.environ
+is_local_dev = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+
+# Настройки движка для PostgreSQL
 engine_options = {
     'pool_recycle': 300,
     'pool_pre_ping': True,
     'poolclass': NullPool,
 }
 
-if is_render and not IS_LOCAL_DEV:
+if is_render and not is_local_dev:
+    # На Render с PostgreSQL - требуется SSL
     engine_options['connect_args'] = {"sslmode": "require"}
-    print(f"✅ Настроено SSL подключение (требуется для Render)")
-elif IS_LOCAL_DEV:
+    print(f"✅ Настроено SSL подключение для Render")
+else:
+    # Локально - без SSL
     print(f"✅ Локальная разработка - SSL не требуется")
 
+# Настраиваем приложение
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = engine_options
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Инициализируем db
 db = SQLAlchemy(app)
 
 # ========== ФУНКЦИЯ ОТПРАВКИ ПИСЬМА ЧЕРЕЗ UNISENDER API ==========
@@ -373,6 +382,8 @@ def get_translations(lang='ru'):
     }
     return translations.get(lang, translations['ru'])
 
+# ========== МОДЕЛИ БАЗЫ ДАННЫХ ==========
+
 # Модель пользователя
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -424,6 +435,8 @@ class Contragent(db.Model):
     emails = db.relationship('Email', backref='contragent', lazy=True, cascade="all, delete-orphan")
     websites = db.relationship('Website', backref='contragent', lazy=True, cascade="all, delete-orphan")
 
+# ========== ДЕКОРАТОРЫ И ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+
 # Декоратор для проверки авторизации
 def login_required(f):
     def decorated_function(*args, **kwargs):
@@ -435,6 +448,40 @@ def login_required(f):
         return f(*args, **kwargs)
     decorated_function.__name__ = f.__name__
     return decorated_function
+
+# Флаг для отслеживания инициализации БД
+database_initialized = False
+
+# Создаем таблицы при первом запросе
+@app.before_request
+def initialize_database():
+    global database_initialized
+    if not database_initialized:
+        try:
+            print("🔄 Создание таблиц в базе данных PostgreSQL...")
+            with app.app_context():
+                db.create_all()
+                print("✅ Таблицы PostgreSQL созданы")
+                
+                # Создаем тестового пользователя, если нет пользователей
+                if User.query.count() == 0:
+                    test_user = User(username='admin', email='admin@example.com')
+                    test_user.set_password('admin123')
+                    db.session.add(test_user)
+                    db.session.commit()
+                    print("✅ Создан тестовый пользователь PostgreSQL:")
+                    print("   Логин: admin")
+                    print("   Пароль: admin123")
+                else:
+                    print(f"ℹ️  В базе PostgreSQL уже есть {User.query.count()} пользователей")
+            
+            database_initialized = True
+        except Exception as e:
+            print(f"⚠️  Ошибка при создании таблиц PostgreSQL: {e}")
+            print("⚠️  Пробуем продолжить...")
+            # Не устанавливаем флаг в True, чтобы попробовать снова при следующем запросе
+
+# ========== МАРШРУТЫ ==========
 
 # Маршрут для смены языка
 @app.route('/set_language/<lang>')
@@ -701,7 +748,7 @@ def reset_password_request_ajax():
         except Exception as e:
             db.session.rollback()
             print(f"❌ Ошибка при сохранении токена: {str(e)}")
-            return jsonify({'success': False, 'message': 'Ошибка сервера при обработке запроса'})
+            return jsonify({'success': False, 'message': 'Ошибка сервера при обработки запроса'})
     
     return jsonify({'success': True, 'message': success_message})
 
@@ -935,30 +982,7 @@ def delete_contragent(id):
         db.session.rollback()
         return jsonify({'success': False, 'message': f'Ошибка при удалении: {str(e)}'})
 
-# Создание тестового пользователя и инициализация БД
-def init_database():
-    with app.app_context():
-        try:
-            db.create_all()
-            print("✅ Таблицы базы данных созданы")
-            
-            if User.query.count() == 0:
-                test_user = User(username='admin', email='admin@example.com')
-                test_user.set_password('admin123')
-                db.session.add(test_user)
-                db.session.commit()
-                print("✅ Создан тестовый пользователь:")
-                print("   Логин: admin")
-                print("   Пароль: admin123")
-            else:
-                print(f"ℹ️  В базе уже есть {User.query.count()} пользователей")
-                
-        except Exception as e:
-            print(f"❌ Ошибка при создании базы данных: {e}")
-            db.session.rollback()
-
-# Инициализируем базу данных при запуске
-init_database()
+# ========== ЗАПУСК ПРИЛОЖЕНИЯ ==========
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
